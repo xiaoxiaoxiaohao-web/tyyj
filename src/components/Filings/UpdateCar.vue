@@ -1,9 +1,10 @@
 <script  lang="ts"  setup>
 import service from '../../service/index'
 import { useHomeStore } from '../../store/home';
-import { reactive } from 'vue';
+import { reactive, toRaw } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { showToast, showFailToast, showNotify } from 'vant';
+import axios from 'axios';
 
 let router = useRouter()
 let route = useRoute()
@@ -23,9 +24,46 @@ function onClickLeft() {
 
 //修改
 function onSubmit() {
-    console.log();
-    
+    carUpdateReport(form.V_CARNO, form.V_ENT_TYPE, form.V_ENT_NAME).then((res:any) => {
+        console.log(res);
+        let data = res.result.info[0]
+        if(data.flag == '1') {
+            showToast('修改成功')
+            router.push({name: 'filings'})
+            //更新本地数据库
+            updateCarInfo()
+        }else {
+            showFailToast('修改失败' + data.desc)
+        }
+    }).catch((err:any) => {
+        console.log(err)
+        showNotify('海关修改结果失败,原因：' + err )
+    })
 }
+
+//车辆信息备案修改
+function carUpdateReport(carNo:string, entType:string, entName:string) {
+    let params = [homeStore.user.PERSON_NAME]
+    params.unshift(entName)
+    params.unshift(entType)
+    params.unshift(carNo)
+    let new_params = (JSON.stringify(params)).replace(/\"/g, "'")
+    return service.hg_service.axios({
+        service: 'RetpostMailService',
+        method: 'CarUpdateReport',
+        params: new_params
+    })
+}
+
+//车辆信息修改
+function updateCarInfo() {
+    service.gh_service.axios('clxxxg', toRaw(form)).then((res:any) => {
+        console.log(res);
+    }).catch((err:any) => {
+        console.log(err);
+    })
+}
+
 </script>
 
 <template>

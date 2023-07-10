@@ -93,15 +93,6 @@ function CarResultReport(carNo:string) {
     }).then((res:any) => {
         let data = res.result.info[0]
         updateCarCheck(carNo, data)
-        // if(data.check == '1') { //审查通过
-
-        // }else if(data.check == '0') { //未审核通过
-
-        // }else { // -1 未进行审核
-
-        // }
-        
-        
     }).catch((err:any) => {
         showNotify({message: '海关审核结果查询失败,原因：' + err })
     })
@@ -109,16 +100,10 @@ function CarResultReport(carNo:string) {
 
 //审核结果更新数据库
 function updateCarCheck(carNo:string, checkInfo:any) {
-
     service.gh_service.axios('clxxbashjggx', {
         V_CARNO: carNo,
         V_CHECK: checkInfo.check,
         V_PASSDESC: checkInfo.passdesc
-    }).then((res:any) => {
-    //    console.log(res);
-       
-    }).catch((err:any) => {
-        instance.appContext.config.globalProperties.$judgeError(err.message, err.response)
     })
 }
 
@@ -133,7 +118,6 @@ function CarDeleteReport(carNo:string, index:number) {
         params: new_params
     }).then((res:any) => {
         let data = res.result.info[0]
-        console.log(data)
         if(data.flag == '1') {
             carList.splice(index, 1)
             deleteCarNo(carNo)
@@ -150,11 +134,10 @@ function deleteCarNo(carNo:string) {
     service.gh_service.axios('clxxsc',{
         V_CARNO: carNo
     }).then((res:any) => {
-        console.log(res);
+        console.log(res)
         
     }).catch((err:any) => {
-        console.log(err);
-        
+        console.log(err)
     })
 }
 

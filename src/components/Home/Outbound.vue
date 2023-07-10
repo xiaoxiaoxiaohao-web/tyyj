@@ -82,7 +82,7 @@ async function outbandAuditAddReport(new_params:any) {
         message: '申请中...',
         forbidClick: true,
         duration: 0,
-    });
+    })
 
     await service.hg_service.axios(
         {
@@ -92,7 +92,6 @@ async function outbandAuditAddReport(new_params:any) {
         }
     ).then((res:any) => {
         let data = res.result.info[0]
-        console.log(res);
         if(data.desc == '录入成功' ) {
             showToast('海关申请录入成功')
             insertAuditNo(data.auditNo)
@@ -199,9 +198,6 @@ function getBagNoInfo(bagno:any) {
             let data = res.data[0]
             formData.V_BAGNO.unshift(bagno)
             mailbagWeight.unshift(data.N_BAGWEIGHT)
-            console.log(formData.V_BAGNO);
-            console.log(mailbagWeight);
-            
             
             //计算总重量
             formData.V_MAILBAG_WEIGHT = parseFloat(data.N_BAGWEIGHT) + parseFloat(formData.V_MAILBAG_WEIGHT) 
