@@ -1,0 +1,101 @@
+<script setup lang="ts">
+// import { RouterLink, RouterView } from 'vue-router'
+// import HelloWorld from './components/HelloWorld.vue'
+import TabbarView from '@/views/TabbarView.vue'
+import { onMounted } from 'vue'
+import {useRoute} from 'vue-router'
+const route = useRoute()
+// function _isMobile() {
+//   let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)
+//   return flag;
+// }
+
+// onMounted(() => {
+//   if(_isMobile()) {
+//       router.push({name: 'login'}) 
+//     }else {
+//       alert('请使用移动端')
+//     }
+// })
+onMounted(() => {
+  console.log(process.env.NODE_ENV);
+  
+})
+</script>
+
+<template>
+  <main>
+      <RouterView/>
+  </main>
+  <footer v-if="route.meta.hideTabbar">
+    <TabbarView></TabbarView>
+  </footer>
+</template>
+
+<style scoped>
+/* main {
+  margin-top: 46px;
+  margin-bottom: 50px;
+} */
+header {
+  line-height: 1.5;
+  max-height: 100vh;
+}
+
+.logo {
+  display: block;
+  margin: 0 auto 2rem;
+}
+
+nav {
+  width: 100%;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+nav a.router-link-exact-active {
+  color: var(--color-text);
+}
+
+nav a.router-link-exact-active:hover {
+  background-color: transparent;
+}
+
+nav a {
+  display: inline-block;
+  padding: 0 1rem;
+  border-left: 1px solid var(--color-border);
+}
+
+nav a:first-of-type {
+  border: 0;
+}
+
+@media (min-width: 1024px) {
+  header {
+    display: flex;
+    place-items: center;
+    padding-right: calc(var(--section-gap) / 2);
+  }
+
+  .logo {
+    margin: 0 2rem 0 0;
+  }
+
+  header .wrapper {
+    display: flex;
+    place-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  nav {
+    text-align: left;
+    margin-left: -1rem;
+    font-size: 1rem;
+
+    padding: 1rem 0;
+    margin-top: 1rem;
+  }
+}
+</style>

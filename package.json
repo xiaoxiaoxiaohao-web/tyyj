@@ -1,0 +1,52 @@
+{
+  "name": "tyyj-mobile",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "run-p type-check build-only",
+    "preview": "vite preview",
+    "test:unit": "vitest",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.12.1",
+    "axios": "^1.4.0",
+    "babel-polyfill": "^6.26.0",
+    "core-js": "^3.31.0",
+    "js-md5": "^0.7.3",
+    "mitt": "^3.0.0",
+    "pinia": "^2.1.4",
+    "regenerator-runtime": "^0.13.11",
+    "vue": "^3.3.2",
+    "vue-axios": "^3.5.2",
+    "vue-router": "^4.2.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.22.5",
+    "@babel/plugin-transform-runtime": "^7.22.5",
+    "@babel/preset-env": "^7.22.5",
+    "@tsconfig/node18": "^2.0.1",
+    "@types/js-md5": "^0.7.0",
+    "@types/jsdom": "^21.1.1",
+    "@types/node": "^18.16.8",
+    "@types/qs": "^6.9.7",
+    "@vitejs/plugin-legacy": "^4.0.4",
+    "@vitejs/plugin-vue": "^4.2.3",
+    "@vue/test-utils": "^2.3.2",
+    "@vue/tsconfig": "^0.4.0",
+    "babel-polyfill": "^6.26.0",
+    "es6-promise": "^4.2.8",
+    "jsdom": "^22.0.0",
+    "npm-run-all": "^4.1.5",
+    "rollup-plugin-esbuild": "^5.0.0",
+    "terser": "^5.18.1",
+    "typescript": "~5.0.4",
+    "unplugin-vue-components": "^0.25.1",
+    "vconsole": "^3.15.1",
+    "vite": "^4.3.5",
+    "vitest": "^0.31.0",
+    "vue-tsc": "^1.6.4"
+  }
+}
