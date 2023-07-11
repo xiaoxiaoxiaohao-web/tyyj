@@ -1,162 +1,30 @@
 <script setup lang="ts">
 import service from '@/service/index'
-import qs from 'qs'
-import { ref, reactive, onMounted, toRaw, getCurrentInstance, ComponentInternalInstance} from 'vue'
-import { useHomeStore } from '../../store/home'
-import { showToast, showFailToast, showNotify, showLoadingToast, closeToast } from 'vant'
+import { getCurrentInstance, onMounted, reactive, ref, toRaw } from 'vue'
+import { showToast, showFailToast, showNotify, showLoadingToast, closeToast } from 'vant';
+import { useHomeStore } from '../../store/home';
+
+
+
 const homeStore = useHomeStore()
-
-let searchValue = ref('')
-let showCenter = ref(false)
-let mailbagWeight = []
-
-let instance  = getCurrentInstance()
-
-let formData:any = reactive({
-    V_CARNO: '', 
-    V_ADDRESS: '', 
-    V_MAILBAG_NUM: '0',
-    V_BAGNO: [],
-    V_MAILBAG_WEIGHT: 0,
-    V_AUDIT_TYPE: '',
-    CUSTOMS_CODE: '5147',
-    V_OPERNAME: homeStore.user.PERSON_NAME
-})
-
-let showTypePicker = ref(false)
-let showCarNoPicker = ref(false)
-let typeColumns = [
-    { text: '转场', value: '1' },
-    { text: '转关', value: '2' },
-    { text: '转运', value: '3' },
-]
-let carNoColumns:any = []
-
+let instance:any = getCurrentInstance()
+let searchValue = ref()
 let searchRef = ref<HTMLInputElement|null>(null)
+let audioNoResult:any = reactive({
+    V_AUDIT_NO: '',
+    V_CHECK: '',
+    V_PASSDESC: ''
+})
+const cell:any = reactive([])
+let showClick:any = ref(true)
+
 
 
 onMounted(() => {
     searchRef.value && searchRef.value.focus()
-    getCarNoList()
 })
 
-//申请
-function onSubmit() {
-    let params = []
-    for(let key in formData) {
-        if(key == 'V_BAGNO') {
-            params.push(formData.V_BAGNO.join(','))
-
-        }else{
-            params.push(formData[key])
-        }
-    }
-    let new_params = (JSON.stringify(params)).replace(/\"/g,"'")
-    outbandAuditAddReport(new_params)
-}
-
-
-//获取车牌号列表
-function getCarNoList() {
-     service.gh_service.axios('clxxcx',{
-        V_CARNO: ''
-    }).then((res:any) => {
-        res.data.forEach((element:any) => {
-            if(element.V_CHECK == '1') {
-                let object = {text: element.V_CARNO, value: element.V_CARNO}
-                carNoColumns.push(object)
-            }
-        });
-    }).catch((err:any) => {
-        console.log(err);
-        instance.appContext.config.globalProperties.$judgeError(err.message)
-    })
-
-    
-}
-
-
-//海关装车出库申请录入接口,获取出库申请序列号
-async function outbandAuditAddReport(new_params:any) {
-    showLoadingToast({
-        message: '申请中...',
-        forbidClick: true,
-        duration: 0,
-    })
-
-    await service.hg_service.axios(
-        {
-            service: 'RetpostMailService',
-            method: 'outbandAuditAddReport',
-            params: new_params
-        }
-    ).then((res:any) => {
-        let data = res.result.info[0]
-        if(data.desc == '录入成功' ) {
-            showToast('海关申请录入成功')
-            insertAuditNo(data.auditNo)
-            updateBagAuditNo(data.auditNo)
-        }else {
-            showNotify({message: '申请失败， 原因：' + data.desc})
-        }
-        
-    }).catch((err:any) => {
-
-        console.log(err);
-        instance.appContext.config.globalProperties.$judgeError(err.message)
-        showNotify({message: '出现错误， 原因：' + err})
-    })
-    closeToast()
-}
-
-//插入数据库
-function insertAuditNo(auditNo:string) {
-    Object.assign(toRaw(formData), {V_AUDIT_NO: auditNo})
-    service.gh_service.axios('insertauditno', toRaw(formData), {
-        'Authorization': homeStore.token
-    }).then((res:any) => {
-        console.log(res);
-        
-    }).catch((err:any) => {
-        console.log(err);
-        instance.appContext.config.globalProperties.$judgeError(err.message)
-        showNotify({message: '出现错误， 原因：' + err})
-    })
-}
-
-//更新BAG表
-function updateBagAuditNo(auditNo:string) {
-    service.gh_service.axios('updatebagauditno', 
-        qs.stringify(
-        {   V_BAGNO: formData.V_BAGNO,
-            V_AUDIT_NO: auditNo
-        },
-        {indices: false})
-    , {
-        'Authorization': homeStore.token
-    }).then((res:any) => {
-        console.log(res);
-        
-    }).catch((err:any) => {
-        console.log(err);
-        instance.appContext.config.globalProperties.$judgeError(err.message)
-        showNotify({message: '出现错误， 原因：' + err})
-    })
-}
-
-
-//类型选择确定
-function onTypeConfirm({selectedOptions} :any ) {
-    formData.V_AUDIT_TYPE = selectedOptions[0].value
-    showTypePicker.value = false
-}
-
-//车牌号选择确定
-function onCarNoConfirm({selectedOptions} :any ) {
-    formData.V_CARNO = selectedOptions[0].value
-    showCarNoPicker.value = false
-}
-
+//查询
 function onSearch(val:any) {
     //两种总包类型
     let pattern1 = /^[0-9]{30}$/
@@ -164,145 +32,253 @@ function onSearch(val:any) {
 
     if(!pattern1.test(val) && !pattern2.test(val)){
         showFailToast('条码不符合规则');
-    }else if(judgeRepeat(val)) {
-        showFailToast('重复总包条码');
     }else {
-        //获取信息
-        getBagNoInfo(val)
+        //重置审核结果
+        for(let key in audioNoResult) {
+            audioNoResult[key] = ''
+        }
+    
+        //清空数组
+        cell.length = 0
+        let bagNo = searchValue.value
+        //数据库查序列号
+        getAuditNo().then((res:any) => {
+            if(res.data.length == 0) {
+                showFailToast('该邮袋未出库申请')
+            }else {
+                let data = res.data[0]
+                audioNoResult.V_AUDIT_NO = data.V_AUDIT_NO
+                outbandAuditResultReport()
+                getAuditNoBagNo(bagNo)
+            }
+        }).catch((err: any) => {
+            showNotify('出现错误，原因：' + err)
+            console.log(err);
+        })
     }
     searchValue.value = ''
     searchRef.value && searchRef.value.focus()
+    closeToast();
+
 }
 
 
-//判断是否重复
-function judgeRepeat(val:string) {
-    let result:boolean = false
-    formData.V_BAGNO.forEach((e:any) => {
-        if(e === val) {
-            result = true
-        }
+//根据邮件查序列号
+function getAuditNo() {
+    return service.gh_service.axios('gjydhcxckxlh', {
+        V_BAGNO: searchValue.value
     })
-    return result;
 }
 
-//获取邮袋信息
-function getBagNoInfo(bagno:any) {
-    service.gh_service.axios('gjydhcxxx', {
-        V_BAGNO: bagno
+//查询序列号审核结果
+function outbandAuditResultReport() {
+    service.hg_service.axios({
+        service: 'RetpostMailService',
+        method: 'outbandAuditResultReport',
+        params: audioNoResult.V_AUDIT_NO
     }).then((res:any) => {
-        if(res.data.length == 0) {
-            showFailToast('该总包未采集');
+        let data = res.result.info[0]
+        if(data.flag == '0') {
+            audioNoResult.V_CHECK = ''
+            audioNoResult.V_PASSDESC = data.desc
+            showClick.value = false
         }else {
-            showToast('扫描成功')
-            let data = res.data[0]
-            formData.V_BAGNO.unshift(bagno)
-            mailbagWeight.unshift(data.N_BAGWEIGHT)
-            
-            //计算总重量
-            formData.V_MAILBAG_WEIGHT = parseFloat(data.N_BAGWEIGHT) + parseFloat(formData.V_MAILBAG_WEIGHT) 
-            formData.V_MAILBAG_NUM = formData.V_BAGNO.length
+            if(data.check == '1') {
+                audioNoResult.V_CHECK = '审核成功'
+            }else if(data.check == '-1') {
+                audioNoResult.V_CHECK = '未进行审核'
+                audioNoResult.V_PASSDESC = data.passdesc
+            }else {
+                audioNoResult.V_CHECK = '审核失败'
+                audioNoResult.V_PASSDESC = data.passdesc || data.desc
+            }
+            //更新数据库 updateauditno
+            updateAuditNo(data.check)
         }
     }).catch((err:any) => {
-        console.log(err)
+        console.log(err);
+        showNotify({message: '海关审核结果查询失败,原因：' + err })
+        audioNoResult.V_CHECK = '查询失败'
+        audioNoResult.V_PASSDESC = '查询失败'
+    })
+
+}
+
+//出库申请审核结果更新
+function updateAuditNo(check:string) {
+    let new_params = {
+        V_AUDIT_NO: audioNoResult.V_AUDIT_NO,
+        V_CHECK: check,
+        V_PASSDESC: audioNoResult.V_PASSDESC
+    }
+    service.gh_service.axios('updateauditno', new_params).then((res:any) => {
+        console.log(res);
+        
+    }).catch((err:any) => {
+        console.log(err);
         instance.appContext.config.globalProperties.$judgeError(err.message)
     })
 }
 
-//清单详细
-function onDetailClick() {
-    showCenter.value = true  
+//查询同序列号邮袋
+function getAuditNoBagNo(bagno:any) {
+    service.gh_service.axios('gjydhcxtcydqd', {
+        V_BAGNO: bagno
+    }).then((res:any) => {
+        res.data.forEach((item:any) => {
+            let object = {V_BAGNO: '', V_CHECK: '', V_PASSDESC: ''}
+            object.V_BAGNO = item.V_BAGNO
+            object.V_CHECK = item.V_CHECK
+            cell.push(object)
+        })
+    }).catch((err:any) => {
+        console.log(err);
+        instance.appContext.config.globalProperties.$judgeError(err.message)
+        showNotify({message: '查询失败'})
+    })
+    searchValue.value = ''
+    searchRef.value && searchRef.value.focus()
 }
 
-//清单删除
-function onDeleteClick(index:number, item?:any) {
-    formData.V_BAGNO.splice(index, 1)
-    formData.V_MAILBAG_NUM = formData.V_BAGNO.length
-    let currentWeight = mailbagWeight[index]
-    console.log(currentWeight);
-    
-    formData.V_MAILBAG_WEIGHT = (formData.V_MAILBAG_WEIGHT - currentWeight).toFixed(3)
-    showToast('删除成功')
+//一键绑定
+function onSubmit() {
+    showLoadingToast({
+        duration: 0,
+        message: '绑定中...',
+        forbidClick: true,
+    });
+    cell.forEach((e:any) => {
+        let params = []
+        params.push(audioNoResult.V_AUDIT_NO)
+        params.push(e.V_BAGNO)
+        params.push(homeStore.user.PERSON_NAME)
+        let new_params = (JSON.stringify(params)).replace(/\"/g,"'")
+        outbandAuditBindReport(new_params).then((res:any) => {
+            let data = res.result.info[0]
+            if(data.flag == '0') {  //请求绑定失败
+                e.V_CHECK = '-1'
+                e.V_PASSDESC = data.desc
+            }else { 
+                if(data.check == '1') {  //命中核查
+                    e.V_CHECK = data.check
+                }else {
+                    e.V_CHECK = data.check
+                }
+            }
+            //更新数据库
+            updateBag(Object.assign(toRaw(e), {V_AUDIT_NO: audioNoResult.V_AUDIT_NO}))
+            
+        }).catch((err:any) => {
+            console.log(err);
+            instance.appContext.config.globalProperties.$judgeError(err.message)
+            showNotify({message: e.V_BAGNO + '绑定失败'})
+        })
+    })
+    outbandAuditEndBindReport(audioNoResult.V_AUDIT_NO)
+    closeToast();
 }
 
+//装车出库申请
+async function outbandAuditBindReport(params:any) {
+    //装车出库申请绑定接口
+    return await service.hg_service.axios({
+        service: 'RetpostMailService',
+        method: 'outbandAuditBindReport',
+        params: params
+    })
+}
+
+//装车出库申请绑定结束接口
+function outbandAuditEndBindReport(audioNo:string) {
+    let params = [homeStore.user.PERSON_NAME]
+    params.unshift(audioNo)
+    let new_params = (JSON.stringify(params)).replace(/\"/g, "'")
+    service.hg_service.axios({
+        service: 'RetpostMailService',
+        method: 'outbandAuditEndBindReport',
+        params: new_params
+    }).then((res:any) => {
+        let data = res.result.info[0]
+        if(data.flag == '1') {
+            data.mailbags.forEach((e:any) => {
+                updateBag({V_BAGNO: e, V_CHECK: '1', V_AUDIT_NO: audioNoResult.V_AUDIT_NO})
+            })
+        }
+        
+    }).catch((err:any) => {
+        console.log(err);
+        instance.appContext.config.globalProperties.$judgeError(err.message)
+    })
+}
+
+
+//更新数据库
+function updateBag(params:object) {
+    service.gh_service.axios('updatebag', params
+    ).then((res:any) => {
+        console.log(res);
+        
+    }).catch((err:any) => {
+        console.log(err);
+        instance.appContext.config.globalProperties.$judgeError(err.message)
+    })
+}
 
 </script>
 
+
 <template>
-    <div class="Outbound">
+    <div class="Loading">
         <header>
             <van-search
                 v-model="searchValue"
                 shape="round"
                 background="#1989fa"
-                placeholder="请扫描清单号"
+                placeholder="请扫描邮袋号"
                 @search="onSearch"
                 ref="searchRef"
             />
         </header>
         <main>
-            <van-form @submit="onSubmit">
-                <van-cell-group>
-                    <van-field v-model="formData.V_CARNO" readonly
-                        is-link name="车牌号" label="车牌号"  
-                        placeholder="点击选择车牌号" required
-                        @click="showCarNoPicker = true"
-                        :rules="[{ required: true, message: '请选择车牌号' }]"
-                        />
-                    <van-popup v-model:show="showCarNoPicker" position="bottom">
-                        <van-picker
-                            :columns="carNoColumns"
-                            @confirm="onCarNoConfirm"
-                            @cancel="showCarNoPicker = false"
-                        />
-                    </van-popup>
-                    <van-field v-model="formData.V_ADDRESS" name="目的地" label="目的地" required :rules="[{ required: true, message: '请输入目的地' }]" />
-                    <van-field v-model="formData.V_MAILBAG_NUM" name="数量" label="数量" is-link @click="onDetailClick" readonly />
-                    <van-field v-model="formData.V_MAILBAG_WEIGHT" name="总重量" label="总重量(kg)" readonly/>
-                    <van-field
-                        v-model="formData.V_AUDIT_TYPE"
-                        readonly
-                        is-link
-                        name="类型"
-                        label="类型"
-                        placeholder="点击选择类型"
-                        @click="showTypePicker = true"
-                        required
-                        :rules="[{ required: true, message: '请选择类型' }]"
-                    />
-                    <van-popup v-model:show="showTypePicker" position="bottom">
-                        <van-picker
-                            :columns="typeColumns"
-                            @confirm="onTypeConfirm"
-                            @cancel="showTypePicker = false"
-                        />
-                    </van-popup>
-                    <van-field v-model="formData.CUSTOMS_CODE" name="关区号" label="关区号" />
-                    <van-field v-model="formData.V_OPERNAME" name="操作人" label="操作人" readonly />
-                </van-cell-group>
-                <!--详细清单弹出框-->
-                <van-popup v-model:show="showCenter"  position="left" round :style="{ width: '80%', height: '100%' }"> 
-                    <van-cell title="邮袋清单"></van-cell>
-                    <van-cell v-for="(item, index) in formData.V_BAGNO" :key="index" :title="item" :style="{padding: '10px 5px'}">
-                        <template #right-icon>
-                            <van-icon name="close" class="close" color="#ee0a24" @click="onDeleteClick(index, item)" />
-                        </template>
-                    </van-cell>
-                </van-popup>
-                <div style="margin: 16px;">
-                    <van-button round block type="primary" native-type="submit">
-                    申请
-                    </van-button>
-                </div>
-            </van-form>
+            <van-cell-group>
+                <van-field v-model="audioNoResult.V_AUDIT_NO" label="序列号" readonly  />
+                <van-field v-model="audioNoResult.V_CHECK" label="审核结果" readonly  />
+                <van-field v-model="audioNoResult.V_PASSDESC" label="反馈信息" readonly type="textarea" />
+            </van-cell-group>
+            <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa', padding: '0 16px' }">
+                同序列号的邮袋({{cell.length}})
+            </van-divider>
+            <div class="tips">
+                <van-icon name="clear" class="clear" color="#ee0a24" />命中
+                <van-icon name="checked" class="checked" color="#07f013" />未命中
+                <van-icon name="warning" class="warning" color="#f09e07" />绑定失败
+                <van-icon name="question" class="question" color="#1989fa" />未绑定
+            </div>
+            <div class="all">
+                <van-cell v-for="(item, index) in cell" :key="index" :label="item.V_BAGNO" title="">
+                    <template #right-icon>
+                        <van-icon v-if="item.V_CHECK == '0'" name="checked" class="checked" color="#07f013" />
+                        <van-icon v-else-if="item.V_CHECK == '1'" name="clear" class="clear" color="#ee0a24" />
+                        <van-icon v-else-if="item.V_CHECK == '-1'" name="warning" class="warning" color="#f09e07" />
+                        <van-icon v-else name="question" class="question" color="#1989fa" />
+                    </template>
+                </van-cell>
+            </div>
+            <van-button type="primary" block @click="onSubmit" round v-show="showClick">一键绑定</van-button>
         </main>
     </div>
 </template>
 
 <style scoped>
 main {
-    padding-top: 2vh;
     padding-bottom: 50px;
-    /* background-color: #F7F8FA; */
 }
+.all {
+    height: 50vh;
+    overflow: scroll;
+    margin: 0 5px;
+    border: 2px dotted #1989fa;
+    margin-bottom: 2vh;
+}
+
 </style>

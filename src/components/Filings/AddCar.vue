@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import service from '../../service/index'
 import { useHomeStore } from '../../store/home';
-import { reactive, getCurrentInstance } from 'vue';
+import { ref, reactive, getCurrentInstance } from 'vue';
 import { useRouter } from 'vue-router';
 import { showToast, showNotify } from 'vant';
 
 
 let router = useRouter()
-let instance = getCurrentInstance()
+const instance:any = getCurrentInstance()
 const homeStore = useHomeStore()
 
 let carInfo:any = reactive({
@@ -16,11 +16,23 @@ let carInfo:any = reactive({
     V_ENT_NAME: '',
     V_OPERNAME: homeStore.user.PERSON_NAME
 })
+let showTypePicker = ref(false)
+let typeColumns = [
+    { text: '转场', value: '1' },
+    { text: '转关', value: '2' },
+    { text: '转运', value: '3' },
+]
 
 
 //返回
 function onClickLeft() {
     router.push({name: 'filings'}) 
+}
+
+//类型选择确定
+function onTypeConfirm({selectedOptions} :any ) {
+    carInfo.V_ENT_TYPE = selectedOptions[0].value
+    showTypePicker.value = false
 }
 
 //新增
@@ -31,6 +43,7 @@ function onAddCarClick() {
             showToast('录入成功')
             //插入数据库
             insertCarInfo()
+            router.push({name: 'filings'})
         }else {
             showNotify({message: '确认失败， 原因：' + data.desc})
         }
@@ -80,18 +93,34 @@ function insertCarInfo() {
                         name="车牌号"
                         label="车牌号"
                         placeholder="车牌号"
+                        required
+                        :rules="[{ required: true, message: '请输入车牌号' }]"
                     />
                     <van-field
                         v-model="carInfo.V_ENT_TYPE"
-                        name="运输类型"
-                        label="运输类型"
-                        placeholder="运输类型"
+                        readonly
+                        is-link
+                        name="类型"
+                        label="类型"
+                        placeholder="点击选择类型"
+                        @click="showTypePicker = true"
+                        required
+                        :rules="[{ required: true, message: '请选择类型' }]"
                     />
+                    <van-popup v-model:show="showTypePicker" position="bottom">
+                        <van-picker
+                            :columns="typeColumns"
+                            @confirm="onTypeConfirm"
+                            @cancel="showTypePicker = false"
+                        />
+                    </van-popup>
                     <van-field
                         v-model="carInfo.V_ENT_NAME"
                         name="企业名称"
                         label="企业名称"
                         placeholder="企业名称"
+                        required
+                        :rules="[{ required: true, message: '请输入企业名称' }]"
                     />
                     <van-field
                         v-model="carInfo.V_OPERNAME"

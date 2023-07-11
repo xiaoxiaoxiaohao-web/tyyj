@@ -9,6 +9,7 @@ let instance = getCurrentInstance()
 let searchValue = ref()
 let searchRef = ref<HTMLInputElement|null>(null)
 let V_AUDIT_TYPE = ref()
+let show = ref(true)
 
 let formData:any = reactive({
     V_AUDIT_NO: '', 
@@ -44,7 +45,7 @@ function outbandLiveReport() {
         if(data.flag == '1') {
             showToast('确认成功')
         }else {
-            showNotify('确认失败， 原因：' + data.desc)
+            showNotify('海关确认失败， 原因：' + data.desc)
         }
         updateflag(data.flag)
     }).catch((err:any) => {
@@ -57,10 +58,8 @@ function outbandLiveReport() {
 function updateflag(flag:string) {
     Object.assign(formData, {V_FLAG: flag})
     service.gh_service.axios('updateflag', 
-    toRaw(formData), 
-    {
-        'Authorization': homeStore.token
-    }).then((res:any) => {
+    toRaw(formData)
+    ).then((res:any) => {
         console.log(res);
     }).catch((err:any) => {
         console.log(err);
@@ -81,8 +80,6 @@ function onSearch(val:any) {
         //获取序列号
         service.gh_service.axios('gjydhcxckxlh', {
             V_BAGNO: searchValue.value
-        },{
-            'Authorization': homeStore.token
         }).then((res:any) => {
 
             if(res.data.length == 0) {
@@ -98,6 +95,7 @@ function onSearch(val:any) {
                     V_AUDIT_TYPE.value = '转关'
                 }else {
                     V_AUDIT_TYPE.value = '转运'
+                    show.value = false
                 }
             }
             
@@ -127,8 +125,8 @@ function onSearch(val:any) {
             <van-cell-group>
                 <van-field v-model="formData.V_AUDIT_NO" label="序列号" readonly  />
                 <van-field v-model="V_AUDIT_TYPE" label="类型" readonly  />
-                <van-field v-model="formData.V_LOCK_NO" label="关锁号" required />
-                <van-field v-model="formData.V_DRIVER_NO" label="司机纸号" required />
+                <van-field v-model="formData.V_LOCK_NO" label="关锁号" required v-show="show" />
+                <van-field v-model="formData.V_DRIVER_NO" label="司机纸号" required v-show="show" />
                 <van-field v-model="formData.V_OPERNAME" name="操作人" label="操作人" readonly />
             </van-cell-group>
         </main>

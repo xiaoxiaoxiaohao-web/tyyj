@@ -1,7 +1,7 @@
 <script  lang="ts"  setup>
 import service from '../../service/index'
 import { useHomeStore } from '../../store/home';
-import { reactive, toRaw } from 'vue';
+import { ref, reactive, toRaw } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { showToast, showFailToast, showNotify } from 'vant';
 import axios from 'axios';
@@ -16,10 +16,22 @@ let form:any = reactive({
     V_ENT_NAME: route.query.V_ENT_NAME,
     V_OPERNAME: route.query.V_OPERNAME
 })
+let showTypePicker = ref(false)
+let typeColumns = [
+    { text: '转场', value: '1' },
+    { text: '转关', value: '2' },
+    { text: '转运', value: '3' },
+]
 
 //返回
 function onClickLeft() {
     router.push({name: 'filings'}) 
+}
+
+//类型选择确定
+function onTypeConfirm({selectedOptions} :any ) {
+    form.V_ENT_TYPE = selectedOptions[0].value
+    showTypePicker.value = false
 }
 
 //修改
@@ -79,18 +91,32 @@ function updateCarInfo() {
                         name="车牌号"
                         label="车牌号"
                         placeholder="车牌号"
+                        required
                     />
                     <van-field
                         v-model="form.V_ENT_TYPE"
+                        readonly
+                        is-link
                         name="类型"
                         label="类型"
-                        placeholder="类型"
+                        placeholder="点击选择类型"
+                        @click="showTypePicker = true"
+                        required
+                        :rules="[{ required: true, message: '请选择类型' }]"
                     />
+                    <van-popup v-model:show="showTypePicker" position="bottom">
+                        <van-picker
+                            :columns="typeColumns"
+                            @confirm="onTypeConfirm"
+                            @cancel="showTypePicker = false"
+                        />
+                    </van-popup>
                     <van-field
                         v-model="form.V_ENT_NAME"
                         name="企业名称"
                         label="企业名称"
                         placeholder="企业名称"
+                        required
                     />
                     <van-field
                         v-model="form.V_OPERNAME"
