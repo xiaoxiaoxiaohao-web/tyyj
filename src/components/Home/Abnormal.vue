@@ -88,6 +88,10 @@ function mailAbnormalDisposeAddReport() {
         
     })
 }
+
+function update() {
+    
+}
 </script>
 
 <template>
