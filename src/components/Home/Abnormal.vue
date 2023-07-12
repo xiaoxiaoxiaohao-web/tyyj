@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import service from '@/service/index'
-import { getCurrentInstance, onMounted, reactive, ref } from 'vue'
+import { getCurrentInstance, onMounted, reactive, ref, toRaw } from 'vue'
 import { showNotify, showFailToast, showToast, showDialog  } from 'vant'
 import { useHomeStore } from '../../store/home';
 import {Base64} from 'js-base64'
@@ -18,7 +18,8 @@ let cell:any = reactive({
     V_ABINFO: '',
     V_INSTRSTARE: '',
     V_FILENAME: '',
-    V_FILEDATA: ''
+    V_FILEDATA: '',
+    V_ABNO: ''
 })
 
 let showAbinfoPicker = ref(false)
@@ -90,7 +91,13 @@ function mailAbnormalDisposeAddReport() {
 }
 
 function update() {
-    
+    service.gh_service.axios('ycyjczcr',toRaw(cell)).then((res:any) => {
+        console.log(res);
+        
+    }).catch((err:any) => {
+        console.log(err);
+        
+    })
 }
 </script>
 
