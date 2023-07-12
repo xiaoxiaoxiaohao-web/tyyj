@@ -21,10 +21,11 @@ let cell:any = reactive({
     V_FILEDATA: ''
 })
 
-let showTypePicker = ref(false)
-let typeColumns = [
+let showAbinfoPicker = ref(false)
+let abinfoColumns = [
     { text: '安检拉下', value: '1' },
     { text: '截留邮件', value: '2' },
+    { text: '放弃包', value: '3' },
 ]
 let showAbnormalTypePicker = ref(false)
 let abnormalTypeColums = [
@@ -35,9 +36,9 @@ let abnormalTypeColums = [
 ]
 
 //类型选择确定
-function onTypeConfirm({selectedOptions} :any ) {
-    cell.V_ENT_TYPE = selectedOptions[0].value
-    showTypePicker.value = false
+function onAbinfoConfirm({selectedOptions} :any ) {
+    cell.V_ABINFO = selectedOptions[0].value
+    showAbinfoPicker.value = false
 }
 
 
@@ -106,24 +107,6 @@ function mailAbnormalDisposeAddReport() {
                 <van-cell-group>
                     <van-field v-model="cell.V_MAILNO" label="邮件号" readonly />
                     <van-field
-                        v-model="cell.V_ENT_TYPE"
-                        readonly
-                        is-link
-                        name="异常类型"
-                        label="异常类型"
-                        placeholder="点击选择类型"
-                        @click="showTypePicker = true"
-                        required
-                        :rules="[{ required: true, message: '请选择类型' }]"
-                    />
-                        <van-popup v-model:show="showTypePicker" position="bottom">
-                            <van-picker
-                                :columns="typeColumns"
-                                @confirm="onTypeConfirm"
-                                @cancel="showTypePicker = false"
-                            />
-                        </van-popup>
-                    <van-field
                         v-model="cell.V_ABNORMALTYPE"
                         readonly
                         is-link
@@ -141,11 +124,28 @@ function mailAbnormalDisposeAddReport() {
                                 @cancel="showAbnormalTypePicker = false"
                             />
                         </van-popup>
-                    <van-field v-model="cell.V_ENTNAME" label="企业名称"   />
-                    <van-field v-model="cell.V_ABINFO" label="情况说明"  />
+                    <van-field v-model="cell.V_ENTNAME" label="企业名称" required  />
+                    <van-field
+                        v-model="cell.V_ABINFO"
+                        readonly
+                        is-link
+                        name="情况说明"
+                        label="情况说明"
+                        placeholder="点击选择情况说明"
+                        @click="showAbinfoPicker = true"
+                        required
+                        :rules="[{ required: true, message: '请选择情况说明' }]"
+                    />
+                        <van-popup v-model:show="showAbinfoPicker" position="bottom">
+                            <van-picker
+                                :columns="abinfoColumns"
+                                @confirm="onAbinfoConfirm"
+                                @cancel="showAbinfoPicker = false"
+                            />
+                        </van-popup>
                     <van-field v-model="cell.V_INSTRSTARE" label="指令状态"   />
-                    <van-field v-model="cell.V_FILENAME" label="文件名称"  />
-                    <van-field v-model="cell.V_FILEDATA" label="文件内容" type="textarea" maxlength="125"  />
+                    <van-field v-model="cell.V_FILENAME" label="文件名称" required />
+                    <van-field v-model="cell.V_FILEDATA" label="文件内容" type="textarea" maxlength="125" required />
                     <van-field v-model="cell.V_OPERATORNAME" label="申报人" readonly />
                 </van-cell-group>
                 <div style="margin: 16px;">
