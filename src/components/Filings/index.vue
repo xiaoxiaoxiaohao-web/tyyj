@@ -6,7 +6,7 @@ import { useRouter } from 'vue-router';
 import { showToast, showFailToast, showNotify, showLoadingToast, closeToast } from 'vant';
 
 const homeStore = useHomeStore()
-let instance = getCurrentInstance()
+let instance:any = getCurrentInstance()
 let searchValue = ref('')
 type car = {
     V_CARNO : string,

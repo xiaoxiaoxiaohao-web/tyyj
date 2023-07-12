@@ -8,7 +8,7 @@ import Tallying from '@/components/Home/Tallying.vue'
 import Outbound from '@/components/Home/Outbound.vue'
 import Loading from '@/components/Home/Loading.vue'
 import Confirmation from '@/components/Home/Confirmation.vue'
-import Shipment from '@/components/Home/Shipment.vue'
+import Abnormal from '@/components/Home/Abnormal.vue'
 
 import Filings from '@/components/Filings/index.vue'
 import AddCar from '@/components/Filings/AddCar.vue'
@@ -65,6 +65,11 @@ const router = createRouter({
           path: 'confirmation',
           name: 'confirmation',
           component: Confirmation,
+        },
+        {
+          path: 'abnormal',
+          name: 'abnormal',
+          component: Abnormal,
         },
       ]
     },

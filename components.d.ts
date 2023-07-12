@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    Abnormal: typeof import('./src/components/Home/Abnormal.vue')['default']
     AddCar: typeof import('./src/components/Filings/AddCar.vue')['default']
     ChangePsw: typeof import('./src/components/User/ChangePsw.vue')['default']
     Confirmation: typeof import('./src/components/Home/Confirmation.vue')['default']

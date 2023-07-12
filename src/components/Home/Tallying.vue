@@ -8,7 +8,7 @@ import { showToast, showFailToast, showNotify } from 'vant';
 let searchValue = ref()
 const cellList:any = ref([])
 const homeStore = useHomeStore()
-let instance = getCurrentInstance()
+let instance:any = getCurrentInstance()
 
 let searchRef = ref<HTMLInputElement|null>(null)
 

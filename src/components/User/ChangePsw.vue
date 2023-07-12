@@ -8,7 +8,7 @@ import { showToast, showNotify } from 'vant';
 
 const router = useRouter()
 const homeStore = useHomeStore()
-let instance = getCurrentInstance()
+let instance:any = getCurrentInstance()
 let form = reactive({
     account: homeStore.user.PERSON_CODE,
     old_password: '',
@@ -66,8 +66,6 @@ function updatePassword(nPsw:string, rPsw:string, oPsw:string) {
             old_password: md5(oPsw).toUpperCase(),
             new_password: md5(nPsw).toUpperCase(),
             repeat_password: md5(rPsw).toUpperCase(),
-        }, {
-            'Authorization': homeStore.token
         }).then((res:any) => {
             console.log(res);
             if(res.success == true) {

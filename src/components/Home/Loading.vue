@@ -7,7 +7,7 @@ import { useHomeStore } from '../../store/home';
 
 
 const homeStore = useHomeStore()
-let instance = getCurrentInstance()
+let instance:any = getCurrentInstance()
 let searchValue = ref()
 let searchRef = ref<HTMLInputElement|null>(null)
 let audioNoResult:any = reactive({
@@ -109,9 +109,7 @@ function updateAuditNo(check:string) {
         V_CHECK: check,
         V_PASSDESC: audioNoResult.V_PASSDESC
     }
-    service.gh_service.axios('updateauditno', new_params, {
-        'Authorization': homeStore.token
-    }).then((res:any) => {
+    service.gh_service.axios('updateauditno', new_params).then((res:any) => {
         console.log(res);
         
     }).catch((err:any) => {
@@ -124,8 +122,6 @@ function updateAuditNo(check:string) {
 function getAuditNoBagNo(bagno:any) {
     service.gh_service.axios('gjydhcxtcydqd', {
         V_BAGNO: bagno
-    }, {
-        'Authorization': homeStore.token
     }).then((res:any) => {
         res.data.forEach((item:any) => {
             let object = {V_BAGNO: '', V_CHECK: '', V_PASSDESC: ''}
@@ -213,9 +209,7 @@ function outbandAuditEndBindReport(audioNo:string) {
 
 //更新数据库
 function updateBag(params:object) {
-    service.gh_service.axios('updatebag', params, {
-        'Authorization': homeStore.token
-    }).then((res:any) => {
+    service.gh_service.axios('updatebag', params).then((res:any) => {
         console.log(res);
         
     }).catch((err:any) => {

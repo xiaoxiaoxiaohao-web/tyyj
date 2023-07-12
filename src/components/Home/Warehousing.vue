@@ -7,7 +7,7 @@ import { useRouter } from 'vue-router';
 
 const homeStore = useHomeStore()
 let router = useRouter()
-let instance = getCurrentInstance()
+let instance:any = getCurrentInstance()
 
 
 let searchRef = ref<HTMLInputElement|null>(null)
@@ -40,8 +40,6 @@ function onSearch(val:string) {
         //判断本转关
         service.gh_service.axios('pdbz', {
             V_MAILNO: val
-        }, {
-            'Authorization': homeStore.token
         }).then((res:any) => { 
             if(res.success == true) {
                 if(res.data[0].NUM > 0) {  //转关
@@ -121,9 +119,7 @@ function mainReport(mailNo:string, mailType:string) {
 
 //插入数据
 function insert() {
-    service.gh_service.axios('tyrkdj', toRaw(cell), {
-        'Authorization': homeStore.token
-    }).then((res:any) => {
+    service.gh_service.axios('tyrkdj', toRaw(cell)).then((res:any) => {
         if(res.success == false) {
             showDialog({ message: '入库失败' });
         }
