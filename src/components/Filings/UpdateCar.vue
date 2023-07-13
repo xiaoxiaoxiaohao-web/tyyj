@@ -1,10 +1,9 @@
-<script  lang="ts"  setup>
+<script  lang="ts" setup>
 import service from '../../service/index'
 import { useHomeStore } from '../../store/home';
 import { ref, reactive, toRaw } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { showToast, showFailToast, showNotify } from 'vant';
-import axios from 'axios';
 
 let router = useRouter()
 let route = useRoute()
@@ -18,9 +17,9 @@ let form:any = reactive({
 })
 let showTypePicker = ref(false)
 let typeColumns = [
-    { text: '转场', value: '1' },
-    { text: '转关', value: '2' },
-    { text: '转运', value: '3' },
+    { text: '转场', value: '1'},
+    { text: '转关', value: '2'},
+    { text: '转运', value: '3'},
 ]
 
 //返回
@@ -37,7 +36,6 @@ function onTypeConfirm({selectedOptions} :any ) {
 //修改
 function onSubmit() {
     carUpdateReport(form.V_CARNO, form.V_ENT_TYPE, form.V_ENT_NAME).then((res:any) => {
-        console.log(res);
         let data = res.result.info[0]
         if(data.flag == '1') {
             showToast('修改成功')
@@ -94,7 +92,7 @@ function updateCarInfo() {
                         required
                     />
                     <van-field
-                        v-model="form.V_ENT_TYPE"
+                        :modelValue="form.V_ENT_TYPE == '1'? '转场': (form.V_ENT_TYPE == '2'?'转关' : '转运')"
                         readonly
                         is-link
                         name="类型"

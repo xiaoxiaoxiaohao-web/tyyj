@@ -23,7 +23,6 @@ let chooseList:any = reactive({})
 
 const actions = [
     { name: '修改' },
-    // { name: '禁用' },
     { name: '删除' },
 ];
 const onSelect = (item:any, index:any) => {
@@ -32,8 +31,6 @@ const onSelect = (item:any, index:any) => {
     show.value = false;
     if(item.name == '修改') {
         router.push({path: '/updatecar', query: chooseList})
-    }else if(item.name == '禁用') {
-
     }else if(item.name == '删除') {
         CarDeleteReport(chooseList.V_CARNO, index)
     }else {
@@ -141,7 +138,6 @@ function deleteCarNo(carNo:string) {
     })
 }
 
-
 </script>
 
 <template>
@@ -165,7 +161,7 @@ function deleteCarNo(carNo:string) {
             :style="{ color: '#1989fa', borderColor: '#1989fa', padding: '0 16px' }">当前备案车辆</van-divider>
             <van-cell-group>
                 <van-cell v-for="(item, index) in carList" icon="logistics" :key="index" 
-                :value="item.V_ENT_TYPE" :label="item.V_ENT_NAME" 
+                :value="item.V_ENT_TYPE == '1'? '转场': (item.V_ENT_TYPE == '2'?'转关' : '转运')" :label="item.V_ENT_NAME" 
                 @click="onShowActionSheet(item)" >
                     <template #title>
                         <span class="custom-title">{{item.V_CARNO}}&nbsp;&nbsp;</span>
