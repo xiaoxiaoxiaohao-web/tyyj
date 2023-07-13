@@ -4,7 +4,7 @@ import service from '@/service/index'
 import { getCurrentInstance, reactive, toRaw } from 'vue';
 import { useRouter } from 'vue-router';
 import { useHomeStore } from '../../store/home';
-import { showToast, showNotify } from 'vant';
+import { showToast, showNotify, showFailToast } from 'vant';
 
 const router = useRouter()
 const homeStore = useHomeStore()
@@ -24,7 +24,13 @@ function onClickLeft() {
 //修改
 function onSubmit() {
 
-    if(judgeSamePassword(form.new_password, form.repeat_password)) {
+    if(form.new_password == '' || form.repeat_password == '') {
+        showFailToast('新密码不能为空')
+    }else if(!judgeSamePassword(form.new_password, form.repeat_password)) {
+        showFailToast('两次新密码输入不一致')
+        form.new_password = ''
+        form.repeat_password = ''
+    }else{
         //先判断原密码是否正确
         login(form.old_password).then((res:any) => {
             if(res.data.length == 0) { 
@@ -35,11 +41,6 @@ function onSubmit() {
         }).catch((err:any) => {
             console.log(err);
         })
-
-    }else{
-        showNotify('两次新密码输入不一致')
-        form.new_password = ''
-        form.repeat_password = ''
     }
     
 }
@@ -51,7 +52,7 @@ function judgeSamePassword(new_password:any, repeat_password:any) {
     }
     return false
 }
-//
+//用登录判断原密码对不对
 function login(psw:string) {
     return service.gh_service.axios('login', {
         account: homeStore.user.PERSON_CODE,
@@ -102,6 +103,7 @@ function updatePassword(nPsw:string, rPsw:string, oPsw:string) {
                         name="原密码"
                         label="原密码"
                         placeholder="原密码"
+                        required
                     />
                     <van-field
                         v-model="form.new_password"
@@ -109,6 +111,7 @@ function updatePassword(nPsw:string, rPsw:string, oPsw:string) {
                         name="新密码"
                         label="新密码"
                         placeholder="新密码"
+                        required
                     />
                     <van-field
                         v-model="form.repeat_password"
@@ -116,6 +119,7 @@ function updatePassword(nPsw:string, rPsw:string, oPsw:string) {
                         name="重复新密码"
                         label="重复新密码"
                         placeholder="重复新密码"
+                        required
                     />
                 </van-cell-group>
                 <div style="margin: 16px;">

@@ -10,23 +10,23 @@ const homeStore = useHomeStore()
 let instance:any = getCurrentInstance()
 let searchValue = ref()
 let searchRef = ref<HTMLInputElement|null>(null)
+let abNo:any = ref('')
 let cell:any = reactive({
     V_MAILNO: '',
     V_ABNORMALTYPE: '',
     V_OPERATORNAME: homeStore.user.PERSON_NAME,
     V_ENTNAME: '',
     V_ABINFO: '',
-    V_INSTRSTARE: '',
+    V_INSTRSTATE: '',
     V_FILENAME: '',
     V_FILEDATA: '',
-    V_ABNO: ''
 })
 
 let showAbinfoPicker = ref(false)
 let abinfoColumns = [
-    { text: '安检拉下', value: '1' },
-    { text: '截留邮件', value: '2' },
-    { text: '放弃包', value: '3' },
+    { text: '安检拉下', value: '安检拉下' },
+    { text: '截留邮件', value: '截留邮件' },
+    { text: '放弃包', value: '放弃包' },
 ]
 let showAbnormalTypePicker = ref(false)
 let abnormalTypeColums = [
@@ -54,7 +54,7 @@ function onSearch(val:string) {
     let pattern = /^[A-Z]{2}[0-9]{9}[A-Z]{2}$/
     //判断是否符合规则
     if(pattern.test(val)) {
-
+        cell.V_MAILNO = val
     }else {
         showFailToast('不符合邮件号规则');
     }
@@ -66,16 +66,17 @@ function onSearch(val:string) {
 function onSumbitClick() {
     //base64加密
     let encodeFiledata = Base64.encode(cell.V_FILEDATA)
-    console.log(encodeFiledata);
+    mailAbnormalDisposeAddReport(encodeFiledata)
     
 }
 
 //异常邮件处置申报
-function mailAbnormalDisposeAddReport() {
+function mailAbnormalDisposeAddReport(encode:string) {
     let params = []
     for(let key in cell) {
         params.push(cell[key])
     }
+    params[params.length - 1] = encode
     let new_params = (JSON.stringify(params)).replace(/\"/g, "'")
     service.hg_service.axios({
         service: 'RetpostMailService',
@@ -83,15 +84,20 @@ function mailAbnormalDisposeAddReport() {
         params: new_params
     }).then((res:any) => {
         console.log(res);
-        
+        let data = res.result.info[0]
+        abNo.value = data.abNo
+        update(abNo.value)
     }).catch((err:any) => {
         console.log(err);
         
     })
 }
 
-function update() {
-    service.gh_service.axios('ycyjczcr',toRaw(cell)).then((res:any) => {
+//更新数据库
+function update(abNo:string) {
+    service.gh_service.axios('ycyjczcr',
+    Object.assign(toRaw(cell), {V_ABNO: abNo})
+    ).then((res:any) => {
         console.log(res);
         
     }).catch((err:any) => {

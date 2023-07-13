@@ -97,7 +97,7 @@ function insertCarInfo() {
                         :rules="[{ required: true, message: '请输入车牌号' }]"
                     />
                     <van-field
-                        v-model="carInfo.V_ENT_TYPE"
+                        :modelValue="carInfo.V_ENT_TYPE == '1'? '转场': (carInfo.V_ENT_TYPE == '2'?'转关' : '转运')"
                         readonly
                         is-link
                         name="类型"

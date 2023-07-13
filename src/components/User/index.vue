@@ -40,7 +40,7 @@ function onVersionClick() {
                 <div class="cell">
                     <van-cell title="详细信息" is-link to="DetailInfo" />
                     <van-cell title="修改密码" is-link to="ChangePsw" />
-                    <van-cell title="版本" is-link @click="onVersionClick" />
+                    <van-cell title="当前版本" is-link @click="onVersionClick" />
                     <van-cell title="退出登录" is-link to="login" />
                 </div>
             </div>
