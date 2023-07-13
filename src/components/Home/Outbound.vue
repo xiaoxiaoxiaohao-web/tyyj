@@ -37,7 +37,7 @@ let searchRef = ref<HTMLInputElement|null>(null)
 
 onMounted(() => {
     searchRef.value && searchRef.value.focus()
-    getCarNoList()
+    getCarNoList('1')
 })
 
 //申请
@@ -57,10 +57,12 @@ function onSubmit() {
 
 
 //获取车牌号列表
-function getCarNoList() {
+function getCarNoList(type:string) {
      service.gh_service.axios('clxxcx',{
-        V_CARNO: ''
+        V_CARNO: '',
+        V_ENT_TYPE: type
     }).then((res:any) => {
+        carNoColumns = []
         res.data.forEach((element:any) => {
             if(element.V_CHECK == '1') {
                 let object = {text: element.V_CARNO, value: element.V_CARNO}
@@ -146,6 +148,7 @@ function updateBagAuditNo(auditNo:string) {
 function onTypeConfirm({selectedOptions} :any ) {
     formData.V_AUDIT_TYPE = selectedOptions[0].value
     showTypePicker.value = false
+    getCarNoList(selectedOptions[0].value)
 }
 
 //车牌号选择确定
@@ -240,24 +243,8 @@ function onDeleteClick(index:number, item?:any) {
         <main>
             <van-form @submit="onSubmit">
                 <van-cell-group>
-                    <van-field v-model="formData.V_CARNO" readonly
-                        is-link name="车牌号" label="车牌号"  
-                        placeholder="点击选择车牌号" required
-                        @click="showCarNoPicker = true"
-                        :rules="[{ required: true, message: '请选择车牌号' }]"
-                        />
-                    <van-popup v-model:show="showCarNoPicker" position="bottom">
-                        <van-picker
-                            :columns="carNoColumns"
-                            @confirm="onCarNoConfirm"
-                            @cancel="showCarNoPicker = false"
-                        />
-                    </van-popup>
-                    <van-field v-model="formData.V_ADDRESS" name="目的地" label="目的地" required :rules="[{ required: true, message: '请输入目的地' }]" />
-                    <van-field v-model="formData.V_MAILBAG_NUM" name="数量" label="数量" is-link @click="onDetailClick" readonly />
-                    <van-field v-model="formData.V_MAILBAG_WEIGHT" name="总重量" label="总重量(kg)" readonly/>
                     <van-field
-                        :modelValue="formData.V_ENT_TYPE == '1'? '转场': (formData.V_ENT_TYPE == '2'?'转关' : '转运')"
+                        :modelValue="formData.V_AUDIT_TYPE == '3'? '转运': (formData.V_AUDIT_TYPE == '2'?'转关' : '转场')"
                         readonly
                         is-link
                         name="类型"
@@ -274,6 +261,22 @@ function onDeleteClick(index:number, item?:any) {
                             @cancel="showTypePicker = false"
                         />
                     </van-popup>
+                    <van-field v-model="formData.V_CARNO" readonly
+                        is-link name="车牌号" label="车牌号"  
+                        placeholder="点击选择车牌号" required
+                        @click="showCarNoPicker = true"
+                        :rules="[{ required: true, message: '请选择车牌号' }]"
+                        />
+                    <van-popup v-model:show="showCarNoPicker" position="bottom">
+                        <van-picker
+                            :columns="carNoColumns"
+                            @confirm="onCarNoConfirm"
+                            @cancel="showCarNoPicker = false"
+                        />
+                    </van-popup>
+                    <van-field v-model="formData.V_ADDRESS" name="目的地" label="目的地" required :rules="[{ required: true, message: '请输入目的地' }]" />
+                    <van-field v-model="formData.V_MAILBAG_NUM" name="数量" label="数量" is-link @click="onDetailClick" readonly />
+                    <van-field v-model="formData.V_MAILBAG_WEIGHT" name="总重量" label="总重量(kg)" readonly/>
                     <van-field v-model="formData.CUSTOMS_CODE" name="关区号" label="关区号" />
                     <van-field v-model="formData.V_OPERNAME" name="操作人" label="操作人" readonly />
                 </van-cell-group>

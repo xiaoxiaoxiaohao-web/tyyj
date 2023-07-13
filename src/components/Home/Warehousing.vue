@@ -153,7 +153,7 @@ function insert() {
             <van-cell-group>
                 <van-field v-model="cell.V_MAILNO" label="邮件号" readonly  />
                 <van-field v-model="cell.MAILTYPE" label="邮件类型" readonly />
-                <van-field v-model="cell.D_RETURN_DATE" label="时间" readonly type="textarea" />
+                <van-field v-model="cell.D_RETURN_DATE" label="时间" readonly/>
                 <van-field v-model="cell.V_OPERNAME" label="操作人" readonly  />
                 <van-field v-model="cell.V_NOTE" label="海关反馈信息" readonly type="textarea" />
             </van-cell-group>     
