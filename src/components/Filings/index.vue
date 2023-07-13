@@ -66,7 +66,8 @@ function onSearch(val:any) {
 //查询车辆信息
 function getCarInfo(carno:any) {
     service.gh_service.axios('clxxcx',{
-        V_CARNO: carno
+        V_CARNO: carno,
+        V_ENT_TYPE: ''
     }).then((res:any) => {
         carList.length = 0
         res.data.forEach((element:any) => {
@@ -119,6 +120,8 @@ function CarDeleteReport(carNo:string, index:number) {
             carList.splice(index, 1)
             deleteCarNo(carNo)
             showToast('删除成功')
+        }else {
+            showNotify(data.desc)
         }
     }).catch((err:any) => {
         console.log(err);
@@ -158,7 +161,7 @@ function deleteCarNo(carNo:string) {
                 <van-button type="primary" @click="onAddCar">新增车辆</van-button>
             </div>
             <van-divider 
-            :style="{ color: '#1989fa', borderColor: '#1989fa', padding: '0 16px' }">当前备案车辆</van-divider>
+            :style="{ color: '#1989fa', borderColor: '#1989fa', padding: '0 16px' }">当前备案车辆({{carList.length}})</van-divider>
             <van-cell-group>
                 <van-cell v-for="(item, index) in carList" icon="logistics" :key="index" 
                 :value="item.V_ENT_TYPE == '1'? '转场': (item.V_ENT_TYPE == '2'?'转关' : '转运')" :label="item.V_ENT_NAME" 

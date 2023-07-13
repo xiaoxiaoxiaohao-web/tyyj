@@ -92,7 +92,7 @@ function updateCarInfo() {
                         required
                     />
                     <van-field
-                        :modelValue="form.V_ENT_TYPE == '1'? '转场': (form.V_ENT_TYPE == '2'?'转关' : '转运')"
+                        :modelValue="form.V_ENT_TYPE == '3'? '转运': (form.V_ENT_TYPE == '2'?'转关' : '转场')"
                         readonly
                         is-link
                         name="类型"
