@@ -1,37 +1,38 @@
 <script setup lang="ts">
-import TabbarView from '@/views/TabbarView.vue'
-import { onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-let route = useRoute()
-const router = useRouter()
+import TabbarView from "@/views/TabbarView.vue";
+import { onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+let route = useRoute();
+const router = useRouter();
 function _isMobile() {
-  let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)
-  return flag;
+	let flag = navigator.userAgent.match(
+		/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i
+	);
+	return flag;
 }
 
 onMounted(() => {
-  console.log(process.env.NODE_ENV);
-  if(_isMobile()) {
-    router.push({name: 'login'}) 
-  }else {
-    router.push({name: 'tablechart'})
-  }
-  
-})
+  	console.log(process.env.NODE_ENV);
+	if (_isMobile()) {
+		router.push({ name: "login" });
+	} else {
+		router.push({ name: "tablechart" });
+	}
+});
 </script>
 
 <template>
-  <main>
-    <RouterView />
-  </main>
-  <footer v-if="route.meta.hideTabbar">
-    <TabbarView></TabbarView>
-  </footer>
+	<main>
+		<RouterView />
+	</main>
+	<footer v-if="route.meta.hideTabbar">
+		<TabbarView></TabbarView>
+	</footer>
 </template>
 
 <style scoped>
 main {
-  width: 100%;
+  	width: 100%;
 }
 /* header {
   line-height: 1.5;
