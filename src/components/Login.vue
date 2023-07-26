@@ -14,7 +14,7 @@ let form = reactive({
 })
 let router = useRouter()
 
-const {user, changeNum} = toRefs(homeStore)
+const {user} = toRefs(homeStore)
 
 
 

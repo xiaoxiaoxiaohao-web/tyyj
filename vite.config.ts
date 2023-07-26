@@ -30,7 +30,7 @@ export default defineConfig({
   ],
   build: {
     target: ['edge70', 'chrome70', 'es2020'],
-    minify: 'terser' 
+    minify: 'terser'
   },
   resolve: {
     alias: {
@@ -39,6 +39,8 @@ export default defineConfig({
   },
   server: {
     cors: true,
+    // host: '10.0.0.240',
+    // port: 1344,
     proxy: {
       // '/api/tyyj': {
       //   target: 'http://10.194.69.22:8520/api/tyyj',
@@ -49,6 +51,7 @@ export default defineConfig({
       '/hg': {
         target: 'http://192.168.15.12:8090/vision/RMIServlet',
         changeOrigin: true,
+        ws: true,
         rewrite: (path) => path.replace('/hg', "")
       }
     }

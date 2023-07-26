@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import { useHomeStore } from '../store/home'
 import Login from '@/components/Login.vue'
 
 import Home from '@/components/Home/index.vue'
@@ -16,6 +17,9 @@ import UpdateCar from '@/components/Filings/UpdateCar.vue'
 import UserView from '@/components/User/index.vue'
 import ChangePsw from '@/components/User/ChangePsw.vue'
 import DetailInfo from '@/components/User/DetailInfo.vue'
+
+import TableChart from '@/components/TableChart/index.vue'
+import TallyingTable from '@/components/TableChart/TallyingTable.vue'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -109,8 +113,33 @@ const router = createRouter({
       path: '/detailinfo',
       name: 'detailinfo',
       component: DetailInfo
+    },
+    {
+      path: '/tablechart',
+      name: 'tablechart',
+      component: TableChart,
+      redirect: {name: "tallyingtable"}, 
+      children: [
+        {
+          path: 'tallyingtable',
+          name: 'tallyingtable',
+          component: TallyingTable
+        }
+      ]
     }
   ]
+})
+
+//路由守卫
+router.beforeEach((to, from, next) => {
+  let homeStore = useHomeStore()
+  if(to.path == '/login' || to.path  == '/tablechart/tallyingtable')  {
+    next()
+  }else if(homeStore.user.PERSON_CODE){   //判断是否已经登录
+    next()
+  }else {
+    router.push({name: 'login'})
+  }
 })
 
 export default router

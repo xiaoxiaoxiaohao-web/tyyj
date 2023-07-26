@@ -36,6 +36,7 @@ function onSearch(val:string) {
     let pattern = /^[A-Z]{2}[0-9]{9}[A-Z]{2}$/
     //判断是否符合规则
     if(pattern.test(val)) {
+        mainReport(val, '2')
         cell.V_MAILNO = val
         //判断本转关
         service.gh_service.axios('pdbz', {
