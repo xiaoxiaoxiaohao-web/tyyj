@@ -75,6 +75,8 @@ function getCarInfo(carno:any) {
             CarResultReport(element.V_CARNO)
         });
     }).catch((err:any) => {
+        console.log(err);
+        
         instance.appContext.config.globalProperties.$judgeError(err.message, err.response)
     })
 }
@@ -92,6 +94,7 @@ function CarResultReport(carNo:string) {
         let data = res.result.info[0]
         updateCarCheck(carNo, data)
     }).catch((err:any) => {
+        console.log(err);
         showNotify({message: '海关审核结果查询失败,原因：' + err })
     })
 }

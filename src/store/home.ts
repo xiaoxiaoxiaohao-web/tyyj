@@ -5,9 +5,9 @@ export const useHomeStore = defineStore('home', {
         return {
             token: '',
             user: {
-                PERSON_NAME: '用户未登录',
+                PERSON_NAME: '',
                 PERSON_CODE: '',
-                RECID: '000',
+                RECID: '',
                 ROLE_ID: '',
                 ROLE_NAME: '',
                 STATUS: '' // 0正常
@@ -15,9 +15,9 @@ export const useHomeStore = defineStore('home', {
         }
     },
     actions: {
-        changeNum() {
+        // changeNum() {
             
-        }
+        // }
     },
     getters: {
         getNum: state => state

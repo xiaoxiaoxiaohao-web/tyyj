@@ -1,31 +1,28 @@
 <script setup lang="ts">
-// import { RouterLink, RouterView } from 'vue-router'
-// import HelloWorld from './components/HelloWorld.vue'
 import TabbarView from '@/views/TabbarView.vue'
 import { onMounted } from 'vue'
-import {useRoute} from 'vue-router'
-const route = useRoute()
-// function _isMobile() {
-//   let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)
-//   return flag;
-// }
+import { useRoute, useRouter } from 'vue-router'
+let route = useRoute()
+const router = useRouter()
+function _isMobile() {
+  let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)
+  return flag;
+}
 
-// onMounted(() => {
-//   if(_isMobile()) {
-//       router.push({name: 'login'}) 
-//     }else {
-//       alert('请使用移动端')
-//     }
-// })
 onMounted(() => {
   console.log(process.env.NODE_ENV);
+  if(_isMobile()) {
+    router.push({name: 'login'}) 
+  }else {
+    router.push({name: 'tablechart'})
+  }
   
 })
 </script>
 
 <template>
   <main>
-      <RouterView/>
+    <RouterView />
   </main>
   <footer v-if="route.meta.hideTabbar">
     <TabbarView></TabbarView>
@@ -33,11 +30,10 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* main {
-  margin-top: 46px;
-  margin-bottom: 50px;
-} */
-header {
+main {
+  width: 100%;
+}
+/* header {
   line-height: 1.5;
   max-height: 100vh;
 }
@@ -70,16 +66,16 @@ nav a {
 
 nav a:first-of-type {
   border: 0;
-}
+} */
 
 @media (min-width: 1024px) {
-  header {
+  /* header {
     display: flex;
     place-items: center;
     padding-right: calc(var(--section-gap) / 2);
-  }
+  } */
 
-  .logo {
+  /* .logo {
     margin: 0 2rem 0 0;
   }
 
@@ -96,6 +92,6 @@ nav a:first-of-type {
 
     padding: 1rem 0;
     margin-top: 1rem;
-  }
+  } */
 }
 </style>

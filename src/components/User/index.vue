@@ -2,6 +2,7 @@
 import { showDialog } from 'vant';
 import { useHomeStore } from '../../store/home'
 import img from '../../assets/images/cat.jpg'
+import router from '../../router';
 
 const homeStore = useHomeStore()
 
@@ -11,6 +12,12 @@ function onVersionClick() {
         title: '版本信息',
         message: '2.1.0'
     })
+
+}
+//退出登录
+function onExitClick() {
+    homeStore.user.PERSON_CODE = ""
+    router.push({name: 'login'})
 }
 
 </script>
@@ -41,7 +48,7 @@ function onVersionClick() {
                     <van-cell title="详细信息" icon="orders-o" is-link to="DetailInfo" />
                     <van-cell title="修改密码" icon="eye-o" is-link to="ChangePsw" />
                     <van-cell title="当前版本" icon="cluster-o" is-link @click="onVersionClick" />
-                    <van-cell title="退出登录" icon="revoke" is-link to="login" />
+                    <van-cell title="退出登录" icon="revoke" is-link @click="onExitClick" />
                 </div>
             </div>
         </main>

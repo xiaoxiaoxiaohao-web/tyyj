@@ -7,12 +7,16 @@ let baseHgURL: string;
 if(process.env.NODE_ENV === 'development') {
     baseGhURL = 'http://10.194.69.22:8520/api/tyyj/',
     baseHgURL = 'http://localhost:5173/hg'
+    console.log(baseHgURL);
 }
 
 //配置生产环境
 if(process.env.NODE_ENV === 'production') {
-    baseGhURL = 'http://10.194.69.22:8520/api/tyyj/',
-    baseHgURL = 'http://localhost:5173/hg' 
+    baseGhURL = 'http://10.0.0.22/api/tyyj/',
+    baseHgURL = 'http://10.0.0.240:1234/hg' 
+    console.log(baseHgURL);
+    console.log("dsgds4896749879");
+    
 }
 
 //设置请求头

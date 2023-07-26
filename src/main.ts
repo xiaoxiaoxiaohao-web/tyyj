@@ -8,7 +8,9 @@ import App from './App.vue'
 import router from './router'
 import 'vant/lib/index.css';
 import { createPinia } from 'pinia'
-import { showToast, showFailToast, showNotify } from 'vant';
+import { showNotify } from 'vant'
+import Antd from 'ant-design-vue';
+import 'ant-design-vue/dist/reset.css';
 
 
 const app = createApp(App)
@@ -39,7 +41,7 @@ app.config.globalProperties.$judgeError = judgeError
 
 
 
-app.use(pinia).use(router)
+app.use(pinia).use(router).use(Antd)
 app.mount('#app')
 
 
