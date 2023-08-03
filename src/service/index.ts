@@ -12,7 +12,7 @@ if(process.env.NODE_ENV === 'development') {
 
 //配置生产环境
 if(process.env.NODE_ENV === 'production') {
-    baseGhURL = 'http://10.0.0.22/api/tyyj/',
+    baseGhURL = 'http://10.0.0.22:8520/api/tyyj/',
     baseHgURL = 'http://10.0.0.240:1234/hg' 
     console.log(baseHgURL);
     console.log("dsgds4896749879");

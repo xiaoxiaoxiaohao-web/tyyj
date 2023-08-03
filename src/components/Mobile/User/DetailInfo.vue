@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive, toRef, toRaw } from 'vue';
 import { useRouter } from 'vue-router';
-import { useHomeStore } from '../../store/home'
+import { useHomeStore } from '@/store/home'
 
 const homeStore = useHomeStore()
 let router = useRouter()
@@ -51,11 +51,11 @@ function onSubmit() {
                         readonly
                     />
                 </van-cell-group>
-                <div style="margin: 16px;">
+                <!-- <div style="margin: 16px;">
                     <van-button round block type="primary" native-type="submit">
                     修改
                     </van-button>
-                </div>
+                </div> -->
             </van-form>
         </main>
     </div>

@@ -12,11 +12,10 @@ function _isMobile() {
 }
 
 onMounted(() => {
-  	console.log(process.env.NODE_ENV);
 	if (_isMobile()) {
 		router.push({ name: "login" });
 	} else {
-		router.push({ name: "tablechart" });
+		router.push({ name: "pclogin" });
 	}
 });
 </script>

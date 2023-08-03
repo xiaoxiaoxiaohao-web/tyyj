@@ -2,13 +2,14 @@
 import service from '@/service/index'
 import qs from 'qs'
 import { ref, reactive, onMounted, toRaw, getCurrentInstance} from 'vue'
-import { useHomeStore } from '../../store/home'
+import { useHomeStore } from '@/store/home'
 import { showToast, showFailToast, showNotify, showLoadingToast, closeToast } from 'vant'
 const homeStore = useHomeStore()
 
 let searchValue = ref('')
 let showCenter = ref(false)
 let mailbagWeight:any = []
+let showCurrentWeight = ref(0)
 
 let instance:any  = getCurrentInstance()
 
@@ -149,6 +150,7 @@ function onTypeConfirm({selectedOptions} :any ) {
     formData.V_AUDIT_TYPE = selectedOptions[0].value
     showTypePicker.value = false
     getCarNoList(selectedOptions[0].value)
+    formData.V_CARNO = ''
 }
 
 //车牌号选择确定
@@ -157,17 +159,20 @@ function onCarNoConfirm({selectedOptions} :any ) {
     showCarNoPicker.value = false
 }
 
+//输入邮袋号
 function onSearch(val:any) {
     //两种总包类型
     let pattern1 = /^[0-9]{30}$/
     let pattern2 = /^[A-Z]{15}[0-9]{14}$/
+    //去除头尾空格
+    val = val.trim()
 
     if(!pattern1.test(val) && !pattern2.test(val)){
         showFailToast('条码不符合规则');
-    }else if(judgeRepeat(val)) {
+    }else if(judgeRepeat(val)) {  //判断是否重复
         showFailToast('重复总包条码');
     }else {
-        //获取信息
+        //获取邮袋信息
         getBagNoInfo(val)
     }
     searchValue.value = ''
@@ -199,9 +204,10 @@ function getBagNoInfo(bagno:any) {
             formData.V_BAGNO.unshift(bagno)
             mailbagWeight.unshift(data.N_BAGWEIGHT)
             
-            //计算总重量
-            formData.V_MAILBAG_WEIGHT = parseFloat(data.N_BAGWEIGHT) + parseFloat(formData.V_MAILBAG_WEIGHT) 
+            //计算总重量、数量
+            formData.V_MAILBAG_WEIGHT = (parseFloat(data.N_BAGWEIGHT) + parseFloat(formData.V_MAILBAG_WEIGHT)).toFixed(2) 
             formData.V_MAILBAG_NUM = formData.V_BAGNO.length
+            showCurrentWeight.value = data.N_BAGWEIGHT
         }
     }).catch((err:any) => {
         console.log(err)
@@ -216,12 +222,17 @@ function onDetailClick() {
 
 //清单删除
 function onDeleteClick(index:number, item?:any) {
+    //删除邮袋号
     formData.V_BAGNO.splice(index, 1)
-    formData.V_MAILBAG_NUM = formData.V_BAGNO.length
+    //获取删除邮袋的重量
     let currentWeight = mailbagWeight[index]
-    console.log(currentWeight);
-    
-    formData.V_MAILBAG_WEIGHT = (formData.V_MAILBAG_WEIGHT - currentWeight).toFixed(3)
+    //删除邮袋重量
+    mailbagWeight.splice(index, 1)
+
+    //计算总重量、数量
+    formData.V_MAILBAG_WEIGHT = (formData.V_MAILBAG_WEIGHT - currentWeight).toFixed(2)
+    formData.V_MAILBAG_NUM = formData.V_BAGNO.length
+    showCurrentWeight.value = currentWeight
     showToast('删除成功')
 }
 
@@ -276,7 +287,11 @@ function onDeleteClick(index:number, item?:any) {
                     </van-popup>
                     <van-field v-model="formData.V_ADDRESS" name="目的地" label="目的地" required :rules="[{ required: true, message: '请输入目的地' }]" />
                     <van-field v-model="formData.V_MAILBAG_NUM" name="数量" label="数量" is-link @click="onDetailClick" readonly />
-                    <van-field v-model="formData.V_MAILBAG_WEIGHT" name="总重量" label="总重量(kg)" readonly/>
+                    <van-field v-model="formData.V_MAILBAG_WEIGHT" name="总重量" label="总重量(kg)" readonly> 
+                        <template #right-icon>
+                            <a> {{showCurrentWeight}}</a>
+                        </template>
+                    </van-field>
                     <van-field v-model="formData.CUSTOMS_CODE" name="关区号" label="关区号" />
                     <van-field v-model="formData.V_OPERNAME" name="操作人" label="操作人" readonly />
                 </van-cell-group>

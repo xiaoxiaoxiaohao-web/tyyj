@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import service from '@/service/index'
 import { reactive, toRaw, ref, onMounted, getCurrentInstance } from 'vue'
-import { useHomeStore } from '../../store/home';
+import { useHomeStore } from '@/store/home';
 import { showNotify, showFailToast, showToast, showDialog  } from 'vant';
 import { useRouter } from 'vue-router';
 
@@ -31,6 +31,7 @@ onMounted(() => {
 
 //查询
 function onSearch(val:string) {
+    val = val.trim()
     Object.assign(cell, cellList())
     //邮件号规则
     let pattern = /^[A-Z]{2}[0-9]{9}[A-Z]{2}$/

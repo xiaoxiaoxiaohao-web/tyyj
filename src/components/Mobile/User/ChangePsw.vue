@@ -3,7 +3,7 @@ import md5 from 'js-md5'
 import service from '@/service/index'
 import { getCurrentInstance, reactive, toRaw } from 'vue';
 import { useRouter } from 'vue-router';
-import { useHomeStore } from '../../store/home';
+import { useHomeStore } from '@/store/home';
 import { showToast, showNotify, showFailToast } from 'vant';
 
 const router = useRouter()
