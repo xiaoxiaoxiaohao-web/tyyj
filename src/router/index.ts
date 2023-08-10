@@ -1,25 +1,28 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import { useHomeStore } from '../store/home'
-import Login from '@/components/Login.vue'
+import Login from '@/components/Mobile/Login.vue'
 
-import Home from '@/components/Home/index.vue'
-import Warehousing from '@/components/Home/Warehousing.vue'
-import Tallying from '@/components/Home/Tallying.vue'
-import Outbound from '@/components/Home/Outbound.vue'
-import Loading from '@/components/Home/Loading.vue'
-import Confirmation from '@/components/Home/Confirmation.vue'
-import Abnormal from '@/components/Home/Abnormal.vue'
+import Home from '@/components/Mobile/Home/index.vue'
+import Warehousing from '@/components/Mobile/Home/Warehousing.vue'
+import Tallying from '@/components/Mobile/Home/Tallying.vue'
+import Outbound from '@/components/Mobile/Home/Outbound.vue'
+import Loading from '@/components/Mobile/Home/Loading.vue'
+import Confirmation from '@/components/Mobile/Home/Confirmation.vue'
+import Abnormal from '@/components/Mobile/Home/Abnormal.vue'
 
-import Filings from '@/components/Filings/index.vue'
-import AddCar from '@/components/Filings/AddCar.vue'
-import UpdateCar from '@/components/Filings/UpdateCar.vue'
+import Filings from '@/components/Mobile/Filings/index.vue'
+import AddCar from '@/components/Mobile/Filings/AddCar.vue'
+import UpdateCar from '@/components/Mobile/Filings/UpdateCar.vue'
 
-import UserView from '@/components/User/index.vue'
-import ChangePsw from '@/components/User/ChangePsw.vue'
-import DetailInfo from '@/components/User/DetailInfo.vue'
+import UserView from '@/components/Mobile/User/index.vue'
+import ChangePsw from '@/components/Mobile/User/ChangePsw.vue'
+import DetailInfo from '@/components/Mobile/User/DetailInfo.vue'
 
-import TableChart from '@/components/TableChart/index.vue'
-import TallyingTable from '@/components/TableChart/TallyingTable.vue'
+import PCLogin from '@/components/PC/Login.vue'
+import Index from '@/components/PC/index.vue'
+import TallyingTable from '@/components/PC/TallyingTable.vue'
+import MailNoTable from '@/components/PC/MailNoTable.vue'
+import UserTable from '@/components/PC/UserTable.vue'
+import DataDisplay from '@/components/PC/DataDisplay/index.vue'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -28,11 +31,17 @@ const router = createRouter({
         path: '/',
         name: '',
         component: Login,
+		meta: {
+			isAuth: false
+		},
     },
     {
         path: '/login',
         name: 'login',
         component: Login,
+		meta: {
+			isAuth: false
+		},
     },
     {
 		path: '/home',
@@ -43,7 +52,7 @@ const router = createRouter({
 			hideTabbar: true,
 			tabbarNum: 0
 		},
-      children: [
+      	children: [
         {
 			path: 'warehousing',
 			name: 'warehousing',
@@ -114,16 +123,39 @@ const router = createRouter({
 		name: 'detailinfo',
 		component: DetailInfo
     },
+	{
+		path: '/pclogin',
+		name: 'pclogin',
+		component: PCLogin,
+		meta: {
+			isAuth: false
+		}
+	},
     {
-		path: '/tablechart',
-		name: 'tablechart',
-		component: TableChart,
-		redirect: {name: "tallyingtable"}, 
+		path: '/index',
+		name: 'index',
+		component: Index,
+		redirect: {name: "mailnotable"}, 
 		children: [
+			{
+				path: 'mailnotable',
+				name: 'mailnotable',
+				component: MailNoTable
+			},
 			{
 				path: 'tallyingtable',
 				name: 'tallyingtable',
 				component: TallyingTable
+			},
+			{
+				path: 'usertable',
+				name: 'usertable',
+				component: UserTable
+			},
+			{
+				path: 'datadisplay',
+				name: 'datadisplay',
+				component: DataDisplay
 			}
 		]
     }
@@ -132,14 +164,14 @@ const router = createRouter({
 
 //路由守卫
 router.beforeEach((to, from, next) => {
-	let homeStore = useHomeStore()
-	if(to.path == '/login' || to.path  == '/tablechart/tallyingtable')  {
-		next()
-	}else if(homeStore.user.PERSON_CODE){   //判断是否已经登录
+
+	if(!to.meta.isAuth)  {
 		next()
 	}else {
-		router.push({name: 'login'})
+		router.push({name: '/'})
 	}
 })
+
+
 
 export default router

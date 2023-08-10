@@ -2,7 +2,7 @@
 import service from '@/service/index'
 import { getCurrentInstance, onMounted, reactive, ref, toRaw } from 'vue'
 import { showToast, showFailToast, showNotify, showLoadingToast, closeToast } from 'vant';
-import { useHomeStore } from '../../store/home';
+import { useHomeStore } from '@/store/home';
 
 
 
@@ -25,6 +25,7 @@ onMounted(() => {
 
 //查询
 function onSearch(val:any) {
+    val = val.trim()
     //两种总包类型
     let pattern1 = /^[0-9]{30}$/
     let pattern2 = /^[A-Z]{15}[0-9]{14}$/

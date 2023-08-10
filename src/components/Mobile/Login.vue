@@ -3,7 +3,7 @@ import md5 from 'js-md5'
 import service from '@/service/index'
 import {  reactive, getCurrentInstance, toRefs } from "vue";
 import { useRouter } from 'vue-router';
-import { useHomeStore } from '../store/home';
+import { useHomeStore } from '@/store/home';
 import { showNotify, showToast  } from 'vant';
 
 const homeStore = useHomeStore()
@@ -30,13 +30,15 @@ function onSubmit() {
             //保存登录信息
             homeStore.user = res.data[0]
             showToast('登录成功')
+            //设置cookies
         }else {
             showNotify({message: '账号或密码错误'})
             form.password = ''
         }
     }).catch((err:any) => {
         console.log(err)
-        showNotify('登录失败' )
+        showNotify({message: '登录失败'})
+        // showNotify('登录失败' )
     })
 }
 
@@ -48,7 +50,7 @@ function onSubmit() {
         <main>
             <div class="title">
                 <img src="@/assets/images/logo.png" alt="logo">
-                <h2>国际退运邮件系统</h2>
+                <h2>国际退运邮件处理系统</h2>
             </div>
             <van-form @submit="onSubmit">
                 <van-cell-group inset>
@@ -64,6 +66,9 @@ function onSubmit() {
                 </div>
             </van-form>
         </main>
+        <footer>
+            <h4>广东省航空邮件处理中心版权所有©2023</h4>
+        </footer>
     </div>
 </template>
 
@@ -76,9 +81,8 @@ function onSubmit() {
     position: absolute;
     top: 0px;
     bottom: 0px;
-    /* background-color: #e6e6e6; */
     text-align: center;
-    background: url('../assets/images/bg-image.jpg');
+    background: url('@/assets/images/bg-image.jpg') no-repeat;
     background-size: cover;
 }
 .title {
@@ -95,5 +99,11 @@ function onSubmit() {
 
 main {
     margin-top: 40%;   
+}
+footer {
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    color: #FFF;
 }
 </style>

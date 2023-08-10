@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import service from '@/service/index'
 import { onMounted, reactive, ref, toRaw, getCurrentInstance } from 'vue'
-import { useHomeStore } from '../../store/home';
+import { useHomeStore } from '@/store/home';
 import { useRouter } from 'vue-router';
 import { showToast, showFailToast, showNotify, showLoadingToast, closeToast } from 'vant';
 

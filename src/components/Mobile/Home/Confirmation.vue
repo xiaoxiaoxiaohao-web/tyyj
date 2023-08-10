@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import service from '@/service/index'
 import { onMounted, reactive, ref, toRaw, getCurrentInstance } from 'vue'
-import { useHomeStore } from '../../store/home';
+import { useHomeStore } from '@/store/home';
 import { showToast, showFailToast, showNotify } from 'vant';
 
 const homeStore = useHomeStore()
@@ -70,6 +70,7 @@ function updateflag(flag:string) {
 
 //扫描邮袋号
 function onSearch(val:any) {
+    val = val.trim()
     //两种总包类型
     let pattern1 = /^[0-9]{30}$/
     let pattern2 = /^[A-Z]{15}[0-9]{14}$/

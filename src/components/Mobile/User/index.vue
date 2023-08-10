@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { showDialog } from 'vant';
-import { useHomeStore } from '../../store/home'
-import img from '../../assets/images/cat.jpg'
-import router from '../../router';
+import { useHomeStore } from '@/store/home'
+import img from '@/assets/images/cat.jpg'
+import router from '@/router';
 
 const homeStore = useHomeStore()
 

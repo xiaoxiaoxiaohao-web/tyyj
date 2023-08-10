@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import service from '../../service/index'
-import { useHomeStore } from '../../store/home';
+import service from '@/service/index'
+import { useHomeStore } from '@/store/home';
 import { ref, reactive, getCurrentInstance } from 'vue';
 import { useRouter } from 'vue-router';
 import { showToast, showNotify } from 'vant';

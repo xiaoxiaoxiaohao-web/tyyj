@@ -4,19 +4,21 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "run-p type-check build-only",
+    "build": "run-p build-only",
     "preview": "vite preview",
     "test:unit": "vitest",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false"
   },
   "dependencies": {
+    "@ant-design/icons-vue": "^6.1.0",
     "@babel/polyfill": "^7.12.1",
     "@surely-vue/table": "^4.0.6",
     "ant-design-vue": "^4.0.0",
     "axios": "^1.4.0",
     "babel-polyfill": "^6.26.0",
     "core-js": "^3.31.0",
+    "echarts": "^5.4.3",
     "js-base64": "^3.7.5",
     "js-md5": "^0.7.3",
     "mitt": "^3.0.0",
@@ -24,6 +26,7 @@
     "regenerator-runtime": "^0.13.11",
     "vue": "^3.3.2",
     "vue-axios": "^3.5.2",
+    "vue-cookies": "^1.8.3",
     "vue-router": "^4.2.0"
   },
   "devDependencies": {

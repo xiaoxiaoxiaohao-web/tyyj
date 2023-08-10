@@ -2,7 +2,7 @@
 import service from '@/service/index'
 import { getCurrentInstance, onMounted, reactive, ref, toRaw } from 'vue'
 import { showNotify, showFailToast, showToast, showDialog  } from 'vant'
-import { useHomeStore } from '../../store/home';
+import { useHomeStore } from '@/store/home';
 import {Base64} from 'js-base64'
 
 

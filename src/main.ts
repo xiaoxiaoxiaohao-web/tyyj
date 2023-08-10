@@ -1,16 +1,16 @@
 import 'babel-polyfill'
 import promise from 'es6-promise'
-
-promise.polyfill()
 import './assets/main.css'
-import { createApp } from 'vue'
+import { createApp, getCurrentInstance } from 'vue'
 import App from './App.vue'
 import router from './router'
 import 'vant/lib/index.css';
 import { createPinia } from 'pinia'
 import { showNotify } from 'vant'
-import Antd from 'ant-design-vue';
-import 'ant-design-vue/dist/reset.css';
+import Antd from 'ant-design-vue'
+import 'ant-design-vue/dist/reset.css'
+
+promise.polyfill()
 
 
 const app = createApp(App)
@@ -38,7 +38,6 @@ function judgeError(err:any, res?:any) {
     return reason;
 }
 app.config.globalProperties.$judgeError = judgeError
-
 
 
 app.use(pinia).use(router).use(Antd)
