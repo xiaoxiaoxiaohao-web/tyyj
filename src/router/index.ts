@@ -1,6 +1,4 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import { useHomeStore } from '../store/home'
-import { getCurrentInstance, onMounted } from "vue"
 import Login from '@/components/Mobile/Login.vue'
 
 import Home from '@/components/Mobile/Home/index.vue'
@@ -22,7 +20,9 @@ import DetailInfo from '@/components/Mobile/User/DetailInfo.vue'
 import PCLogin from '@/components/PC/Login.vue'
 import Index from '@/components/PC/index.vue'
 import TallyingTable from '@/components/PC/TallyingTable.vue'
+import MailNoTable from '@/components/PC/MailNoTable.vue'
 import UserTable from '@/components/PC/UserTable.vue'
+import DataDisplay from '@/components/PC/DataDisplay/index.vue'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -135,12 +135,12 @@ const router = createRouter({
 		path: '/index',
 		name: 'index',
 		component: Index,
-		redirect: {name: "tallyingtable"}, 
+		redirect: {name: "mailnotable"}, 
 		children: [
 			{
-				path: 'tallyingtable',
-				name: 'tallyingtable',
-				component: TallyingTable
+				path: 'mailnotable',
+				name: 'mailnotable',
+				component: MailNoTable
 			},
 			{
 				path: 'tallyingtable',
@@ -151,6 +151,11 @@ const router = createRouter({
 				path: 'usertable',
 				name: 'usertable',
 				component: UserTable
+			},
+			{
+				path: 'datadisplay',
+				name: 'datadisplay',
+				component: DataDisplay
 			}
 		]
     }

@@ -1,15 +1,10 @@
 <script setup lang="ts">
-import TabbarView from "@/views/TabbarView.vue";
-import { onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-let route = useRoute();
-const router = useRouter();
-function _isMobile() {
-	let flag = navigator.userAgent.match(
-		/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i
-	);
-	return flag;
-}
+import TabbarView from "@/views/TabbarView.vue"
+import { onMounted, ref } from "vue"
+import { useRoute, useRouter } from "vue-router"
+let route = useRoute()
+const router = useRouter()
+let clientWidth:any = ref(0)
 
 onMounted(() => {
 	if (_isMobile()) {
@@ -17,7 +12,24 @@ onMounted(() => {
 	} else {
 		router.push({ name: "pclogin" });
 	}
-});
+})
+
+watch: {
+  // clientWidth(val) {
+
+  // }
+}
+
+function _isMobile() {
+	let flag = navigator.userAgent.match(
+		/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i
+	);
+	return flag;
+}
+
+function getClientWidth() {
+  clientWidth.value = document.documentElement.clientWidth
+}
 </script>
 
 <template>

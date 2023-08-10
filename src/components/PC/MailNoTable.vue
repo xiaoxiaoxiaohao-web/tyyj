@@ -7,51 +7,33 @@ import table2excel from 'js-table2excel'
 //表头
 let columns:any = ref<TableColumnsType>([
     {
-        title: '邮袋号',
-        dataIndex: 'V_BAGNO',
-        key: 'V_BAGNO',
+        title: '邮件号',
+        dataIndex: 'V_MAILNO',
+        key: 'V_MAILNO',
         width: 150
     },
     {
-        title: '重量(kg)',
-        dataIndex: 'N_BAGWEIGHT',
-        key: 'N_BAGWEIGHT',
-        width: 30
-    },
-    {
-        title: '目的地',
-        dataIndex: 'V_DESTINATION',
-        key: 'V_DESTINATION',
+        title: '申报时间',
+        dataIndex: 'D_APPTIME',
+        key: 'D_APPTIME',
         width: 100
     },
     {
-        title: '航班号',
-        dataIndex: 'V_HBH',
-        key: 'V_HBH',
+        title: '查询结果',
+        dataIndex: 'V_NOTE',
+        key: 'V_NOTE',
         width: 80
     },
     {
-        title: '封发时间',
-        dataIndex: 'D_DESPTIME',
-        key: 'D_DESPTIME',
-        width: 80
-    },
-    {
-        title: '出库装车序列号',
-        dataIndex: 'V_AUDIT_NO',
-        key: 'V_AUDIT_NO',
+        title: '退运指令时间',
+        dataIndex: 'D_RETURN_DATE',
+        key: 'D_RETURN_DATE',
         width: 80
     },
     {
         title: '操作人',
-        dataIndex: 'V_OPERATORNAME',
-        key: 'V_OPERATORNAME',
-        width: 80
-    },
-    {
-        title: '采集时间',
-        dataIndex: 'D_CJSJ',
-        key: 'D_CJSJ',
+        dataIndex: 'V_OPERNAME',
+        key: 'V_OPERNAME',
         width: 80
     },
 ])
@@ -59,11 +41,9 @@ let columns:any = ref<TableColumnsType>([
 let dataSource =  ref([])
 let dateValue = ref()
 let selectData = reactive({
-    V_BAGNO: '',
-    N_BAGWEIGHT: '',
-    V_DESTINATION: '',
-    V_HBH: '',
-    D_CJSJ: dateValue.value
+    V_MAILNO: '',
+    D_APPTIME: '',
+    V_OPERNAME: ''
 })
 
 let tablePagination = reactive({
@@ -76,12 +56,13 @@ let tablePagination = reactive({
 })
 
 onMounted(() => {
-    getTallyingTableData(toRaw(selectData))
+    getMailNoTableData(toRaw(selectData))
 })
 
 //获取表格数据
-function getTallyingTableData(data:object) {
-    service.gh_service.axios('select', data)
+//tb_return_mail
+function getMailNoTableData(data:object) {
+    service.gh_service.axios('cxyjxx', data)
     .then((res:any) => {
         dataSource.value = res.data
     }).catch((err:any) => {
@@ -92,7 +73,7 @@ function getTallyingTableData(data:object) {
 
 //选择日期
 function onChangePicker (value:any, dateString:any) {
-    selectData.D_CJSJ = dateString
+    selectData.D_APPTIME = dateString
     
 }
 
@@ -102,37 +83,40 @@ function onTableChange(pagination:any) {
     tablePagination.current = pagination.current
 }
 
+
+//查询
 function onFinshClick() {
-    getTallyingTableData(toRaw(selectData))
+    getMailNoTableData(toRaw(selectData))
+    
 }   
 
-function handleFinishFailed() {
 
+function handleFinishFailed(val) {
+    console.log(val);
+    
 }
 
 //重置
 function onResetClick() {
-    dateValue.value = ''
     selectData = reactive({
-        V_BAGNO: '',
-        N_BAGWEIGHT: '',
-        V_DESTINATION: '',
-        V_HBH: '',
-        D_CJSJ: dateValue.value
+        V_MAILNO: '',
+        D_APPTIME: '',
+        V_OPERNAME: ''
     })
+    dateValue.value = ''
     onFinshClick()
 }
 
-
 //导出
 function onExportClick() {
-    table2excel(columns.value, dataSource.value, '理货总包数据' + new Date().getTime())
+    table2excel(columns.value, dataSource.value, '入库邮件数据' + new Date().getTime())
 }
+
 
 </script>
 
 <template>
-    <div class="TallyingTable">
+    <div class="MailNoTable">
         <header>
             <a-form
                 layout="inline"
@@ -140,20 +124,14 @@ function onExportClick() {
                 @finish="onFinshClick"
                 @finishFailed="handleFinishFailed"
             >
-                <a-form-item label="邮袋号">
-                    <a-input v-model:value="selectData.V_BAGNO" placeholder="邮袋号" />
+                <a-form-item label="邮件号">
+                    <a-input v-model:value="selectData.V_MAILNO" placeholder="邮件号" />
                 </a-form-item>
-                <a-form-item label="目的地">
-                    <a-input v-model:value="selectData.V_DESTINATION" placeholder="目的地" />
-                </a-form-item>
-                <a-form-item label="航班号">
-                    <a-input v-model:value="selectData.V_HBH" placeholder="航班号" />
-                </a-form-item>
-                <a-form-item label="出库装车序列号">
-                    <a-input v-model:value="selectData.V_AUDIT_NO" placeholder="出库装车序列号" />
-                </a-form-item>
-                <a-form-item label="采集时间">
+                <a-form-item label="申报时间">
                     <a-date-picker v-model:value="dateValue" @change="onChangePicker" />
+                </a-form-item>
+                <a-form-item label="操作人">
+                    <a-input v-model:value="selectData.V_OPERNAME" placeholder="操作人" />
                 </a-form-item>
                 <a-form-item>
                     <a-space>
@@ -164,12 +142,12 @@ function onExportClick() {
             </a-form>
         </header>
         <main>
-            <div class="btn-group" style="margin-bottom: 15px;">
-                <a-button type="primary" @click="onExportClick">导出</a-button>
+            <div class="btn-group">
+                <a-button type="primary" @click="onExportClick" class="export">导出</a-button>
             </div>
-            <a-table bordered size="middle"
+            <a-table bordered size="middle" 
                 :dataSource="dataSource" 
-                :columns="columns"
+                :columns="columns" 
                 :scroll="{ y: 480 }"
                 :pagination="tablePagination"
                 @change="onTableChange"
@@ -185,4 +163,8 @@ header {
 main {
     margin: 20px 30px;
 }
+.btn-group {
+    margin-bottom: 15px;
+}
+
 </style>

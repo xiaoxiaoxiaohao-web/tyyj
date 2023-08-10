@@ -25,7 +25,7 @@ function onFinish() {
         password: md5(form.password).toUpperCase()
     }).then((res:any) => {
         if(res.data.length > 0) {
-            router.push({name: 'tallyingtable'})
+            router.push({name: 'mailnotable'})
             homeStore.user = res.data[0]
             message.success('登录成功')
         }else {

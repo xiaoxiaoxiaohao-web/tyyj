@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import service from '@/service/index'
-import { onMounted, reactive, ref, computed } from 'vue'
+import { onMounted, reactive, ref, computed, toRaw } from 'vue'
 import type { TableColumnsType, FormProps  } from 'ant-design-vue';
 import type { UnwrapRef } from 'vue';
 // import { cloneDeep } from 'lodash-es';
@@ -30,7 +30,7 @@ let columns = ref<TableColumnsType>([
         key: 'ROLE_NAME',
     },
 ])
-let selectData = ref({
+let selectData = reactive({
     PERSON_NAME: '',
     PERSON_CODE: '',
 })
@@ -59,15 +59,13 @@ const start = () => {
 };
 
 onMounted(() => {
-    getUserTableData()
+    getUserTableData(toRaw(selectData))
 })
 
 //获取表格数据
-function getUserTableData() {
-    service.gh_service.axios('userlist')
+function getUserTableData(data:object) {
+    service.gh_service.axios('cxyhlb', data)
     .then((res:any) => {
-        console.log(res)
-        
         dataSource.value = res.data
     }).catch((err:any) => {
         console.log(err);
@@ -75,12 +73,21 @@ function getUserTableData() {
     })
 }
 
-function onFinish() {
-
+function onFinshClick() {
+    getUserTableData(toRaw(selectData))
 }
 
 function onFinishFailed() {
 
+}
+
+//重置
+function onResetClick() {
+    selectData = reactive({
+        PERSON_NAME: '',
+        PERSON_CODE: '',
+    })
+    onFinshClick()
 }
 
 const onSelectChange = (selectedRowKeys: []) => {
@@ -90,12 +97,12 @@ const onSelectChange = (selectedRowKeys: []) => {
 </script>
 
 <template>
-    <div class="tallyingTable">
+    <div class="UserTable">
         <header>
             <a-form
                 layout="inline"
                 :model="selectData"
-                @finish="onFinish"
+                @finish="onFinshClick"
                 @finishFailed="onFinishFailed"
             >
                 <a-form-item label="员工名">
@@ -105,12 +112,15 @@ const onSelectChange = (selectedRowKeys: []) => {
                     <a-input v-model:value="selectData.PERSON_CODE" placeholder="账号" />
                 </a-form-item>
                 <a-form-item>
-                    <a-button type="primary" html-type="submit">查询</a-button>
+                    <a-space>
+                        <a-button type="primary" html-type="submit">查询</a-button>
+                        <a-button type="primary" primary ghost @click="onResetClick">重置</a-button>
+                    </a-space>
                 </a-form-item>
             </a-form>
         </header>
         <main>
-            <div style="margin-bottom: 16px">
+            <!-- <div style="margin-bottom: 16px">
                 <a-button type="primary" :loading="state.loading" @click="start">
                     Reload
                 </a-button>
@@ -119,7 +129,7 @@ const onSelectChange = (selectedRowKeys: []) => {
                     {{ `Selected ${state.selectedRowKeys.length} items` }}
                     </template>
                 </span>
-            </div>
+            </div> -->
             <a-table bordered size="middle" 
                 :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
                 :dataSource="dataSource" 
@@ -131,9 +141,9 @@ const onSelectChange = (selectedRowKeys: []) => {
 
 <style scoped>
 header {
-    margin-top: 10px;
+    margin: 10px 30px;
 }
 main {
-    margin-top: 20px;
+    margin: 20px 30px;
 }
 </style>

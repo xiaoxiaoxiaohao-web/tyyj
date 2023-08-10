@@ -12,13 +12,19 @@ dayjs.locale('zh');
 
 let router = useRouter()
 const homeStore = useHomeStore()
-const current = ref<string[]>(['tallying'])
+const current = ref<string[]>(['mailno'])
 const items: any = ref<MenuProps["items"]>([
+	{
+		key: 'mailno',
+		icon: () => h(TableOutlined),
+		label: "入库邮件",
+		title: "入库邮件",
+	},
 	{
 		key: 'tallying',
 		icon: () => h(TableOutlined),
-		label: "理货采集总包",
-		title: "理货采集总包",
+		label: "理货总包",
+		title: "理货总包",
 	},
 	{
 		key: 'user',
@@ -29,28 +35,27 @@ const items: any = ref<MenuProps["items"]>([
 	{
 		key: 'data',
 		icon: () => h(PieChartOutlined),
-		label: "数据分析",
-		title: "数据分析",
+		label: "数据展示",
+		title: "数据展示",
 	},
 ])
 
 function onMenuClick({ item, key, keyPath }) {
 	switch(key){
 		case 'tallying':
-			current.value = ['0']
 			router.push({name: 'tallyingtable'})
 			break;
+		case 'mailno':
+			router.push({name: 'mailnotable'})
+			break;
 		case 'user':
-			current.value = ['1']
 			router.push({name: 'usertable'})
 			break;
 		case 'data':
-			current.value = ['2']
-			router.push({name: 'tallyingtable'})
+			router.push({name: 'datadisplay'})
 			break;
 		default:
-			current.value = ['0']
-			router.push({name: 'tallyingtable'})
+			router.push({name: 'mailnotable'})
 	}
 	
 }
@@ -111,6 +116,7 @@ function onExitClick() {
 <style scoped>
 header {
 	display: flex;
+	border-bottom: 1px solid rgba(5, 5, 5, 0.06);
 }
 /* .title {
 	width: 10%;
