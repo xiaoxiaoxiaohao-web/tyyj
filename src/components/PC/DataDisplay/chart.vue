@@ -1,18 +1,17 @@
 <script lang="ts" setup>
 import * as echarts from 'echarts'
 import service from '@/service/index'
-import { onMounted, reactive, ref, toRaw } from 'vue'
-import { log } from 'console'
+import { onMounted, reactive, ref, toRaw, watch } from 'vue'
 
 let bar = ref<HTMLInputElement|null>(null)
-let option:any = {
+let barOption:any = {
     title: {
         text: '退运数据整体情况',
         left: 'center'
     },
     grid: {
         left: '10%',
-        right: '20%'
+        right: '15%'
     },
     xAxis: {
         type: 'category',
@@ -33,9 +32,14 @@ let option:any = {
             type: 'shadow'
         }
     },
+    toolbox: {
+        id: '11',
+        show: true,
+        orient: 'horizontal'
+    },
     legend: {
         data: ['邮件', '邮袋'],
-        left: 'left'
+        left: 'right'
     },
     series: [
         {
@@ -84,26 +88,45 @@ let option:any = {
     ]
 }
 
+let clientWidth = ref<number>(document.body.clientWidth)
+let myChart:any
+
 onMounted(() => {
     getTallyingGroupData()
     getMailNoGroupData()
+    window.addEventListener('resize', () => {
+        // clientWidth.value = document.body.clientWidth
+        myChart.resize()
+        barOption && myChart.setOption(barOption)
+    })
 })
+
+// watch(clientWidth, (newVal, oldVal) => {
+//     console.log(newVal);
+//     console.log(oldVal);
+//     getTallyingGroupData()
+//     getMailNoGroupData()
+    
+// })
+
 
 //获取理货总包数据
 function getTallyingGroupData() {
     service.gh_service.axios('ydxxqk').then((res:any) => {
         if(res.success == true) {
+            barOption.xAxis.data = []
+            barOption.dataZoom[0].xAxisIndex = []
+            barOption.series[1].data = []
             let data = res.data
             data.forEach((e:any) => {
-                option.xAxis.data.push(e.D_CJSJ)
-                option.dataZoom[0].xAxisIndex.push(e.D_APPTIME)
-                option.series[1].data.push(e.NUM)
+                barOption.xAxis.data.push(e.D_CJSJ)
+                barOption.dataZoom[0].xAxisIndex.push(e.D_APPTIME)
+                barOption.series[1].data.push(e.NUM)
             })
             //根据数据变动，尽可能显示8条数据
             if(data.length > 8) {
-                option.dataZoom[0].start = (8/data.length) * 100
+                barOption.dataZoom[0].start = (8/data.length) * 100
             }
-            createBarChart()
         }
     }).catch((err:any) => {
         console.log(err);
@@ -115,16 +138,11 @@ function getTallyingGroupData() {
 function getMailNoGroupData() {
     service.gh_service.axios('yjxxqk').then((res:any) => {
         if(res.success == true) {
+            barOption.series[0].data = []
             let data = res.data
             data.forEach((e:any) => {
-                // option.xAxis.data.push(e.D_CJSJ)
-                // option.dataZoom[0].xAxisIndex.push(e.D_APPTIME)
-                option.series[0].data.push(e.NUM)
+                barOption.series[0].data.push(e.NUM)
             })
-            //根据数据变动，尽可能显示8条数据
-            if(data.length > 8) {
-                option.dataZoom[0].start = (8/data.length) * 100
-            }
             createBarChart()
         }
     }).catch((err:any) => {
@@ -136,8 +154,9 @@ function getMailNoGroupData() {
 //构建条形图
 function createBarChart() {
     let chartDom = bar.value
-    let myChart = echarts.init(chartDom)
-    option && myChart.setOption(option)
+    myChart = echarts.init(chartDom)
+    myChart.resize()
+    barOption && myChart.setOption(barOption)
 }
 
 </script>

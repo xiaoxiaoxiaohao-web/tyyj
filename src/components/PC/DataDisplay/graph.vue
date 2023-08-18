@@ -2,10 +2,8 @@
 import * as echarts from 'echarts'
 import { onMounted, reactive, ref, toRaw } from 'vue'
 
-type EChartsOption = echarts.EChartsOption
 let graph = ref<HTMLInputElement|null>(null)
-var option: EChartsOption;
-option = {
+let graphOption = {
     title: {
         text: '退运流程图',
         left: 'center'
@@ -100,15 +98,21 @@ option = {
     }
   ]
 }
+let myGraph:any
 
 onMounted(() => {
     createGraph()
+    window.addEventListener('resize', () => {
+        // clientWidth.value = document.body.clientWidth
+        myGraph.resize()
+        graphOption && myGraph.setOption(graphOption)
+    })
 })
 
 function createGraph() {
-    var chartDom = graph.value
-    var myChart = echarts.init(chartDom)
-    option && myChart.setOption(option)
+    let chartDom = graph.value
+    myGraph = echarts.init(chartDom)
+    graphOption && myGraph.setOption(graphOption)
 }
 
 
