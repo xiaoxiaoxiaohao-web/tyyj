@@ -12,6 +12,7 @@ dayjs.locale('zh');
 
 let router = useRouter()
 const homeStore = useHomeStore()
+let open = ref(false)
 const current = ref<string[]>(['mailno'])
 const items: any = ref<MenuProps["items"]>([
 	{
@@ -60,12 +61,18 @@ function onMenuClick({ item, key, keyPath }) {
 	
 }
 
-function onInfoClick() {
-
-}
-
 function onExitClick() {
 	router.push({name: 'pclogin'})
+}
+
+//个人信息显示
+function onShowInfo() {
+	open.value = true
+}
+
+
+function onClose() {
+	open.value = false
 }
 
 </script>
@@ -85,13 +92,12 @@ function onExitClick() {
 					<template #icon><UserOutlined /></template>
 				</a-avatar>
 				<div class="info">
-					<!-- <span>{{ homeStore.user.PERSON_NAME }} <caret-down-outlined /></span> -->
 					<a-dropdown>
 						<span class="ant-dropdown-link" @click.prevent>{{ homeStore.user.PERSON_NAME }}<CaretDownOutlined /></span>
 							<template #overlay>
 								<a-menu>
 									<a-menu-item>
-										<span href="javascript:;">个人信息</span>
+										<span @click="onShowInfo">个人信息</span>
 									</a-menu-item>
 									<a-menu-item>
 										<span href="javascript:;">修改密码</span>
@@ -102,6 +108,11 @@ function onExitClick() {
 								</a-menu>
 							</template>
 					</a-dropdown>
+					<a-drawer :width="300" title="个人信息" :placement="placement" :open="open" @close="onClose">
+						<p>Some contents...</p>
+						<p>Some contents...</p>
+						<p>Some contents...</p>
+					</a-drawer>
 				</div>
 			</div>
 		</header>
@@ -134,12 +145,11 @@ header {
 	width: calc(100% - 100px);
 }
 .user {
-	width: 10%;
+	min-width: 125px;
 	line-height: 50px;
 	display: flex;
 }
 .info {
-	width: 50%;
 	padding-left: 10px;
 	cursor: pointer;
 }

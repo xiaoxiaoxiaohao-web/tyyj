@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import service from '@/service/index'
 import { onMounted, reactive, ref, toRaw } from 'vue'
-import type { TableColumnsType, FormProps  } from 'ant-design-vue'
+import { TableColumnsType, FormProps, message  } from 'ant-design-vue'
 import table2excel from 'js-table2excel'
 
 //表头
@@ -127,6 +127,7 @@ function onResetClick() {
 //导出
 function onExportClick() {
     table2excel(columns.value, dataSource.value, '理货总包数据' + new Date().getTime())
+    message.success('导出成功')
 }
 
 </script>

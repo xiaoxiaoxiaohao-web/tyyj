@@ -4,10 +4,6 @@ import { onBeforeMount, onMounted, reactive, ref, toRaw } from 'vue'
 import service from '@/service/index'
 
 
-onMounted(() => {
-
-})
-
 
 </script>
 
@@ -18,15 +14,11 @@ onMounted(() => {
         </header>
         <main>
             <div class="left">
-                <mail-no-roll></mail-no-roll>
-                <!-- <mail-no-chart></mail-no-chart> -->
-            </div>
-            <div class="center">
-                <chart></chart>
+                <roll></roll>
+                <graph></graph>
             </div>
             <div class="right">
-                <tallying-roll></tallying-roll>
-                <graph></graph>
+                <chart></chart>
             </div>
         </main>
         <footer>
@@ -38,7 +30,6 @@ onMounted(() => {
 <style scoped>
 .DataDisplay {
     text-align: center;
-    /* background: #ececec; */
     color: #1677ff;
 }
 main {
@@ -48,15 +39,15 @@ main > div {
     border-radius: 10px;
     margin: 10px 10px 50px 10px;
 }
-.left, .right {
+.left{
     border: 1px solid #ececec;
     width: 25%;
+    min-width: 340px;
 }
-.center {
-    width: 50%;
+.right {
+    width: 70%;
 }
 .left > div, .right > div {
-    /* border: 1px solid #ececec; */
     border-radius: 10px;
     margin: 10px 10px 50px 10px;
 }
@@ -69,6 +60,5 @@ footer {
     line-height: 30px;
     text-align: center;
     color: #1677ff;
-    /* background: url('@/assets/images/login-top.png'); */
 }
 </style>
