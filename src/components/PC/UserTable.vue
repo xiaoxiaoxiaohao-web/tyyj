@@ -2,8 +2,6 @@
 import service from '@/service/index'
 import { onMounted, reactive, ref, computed, toRaw } from 'vue'
 import type { TableColumnsType, FormProps  } from 'ant-design-vue';
-import type { UnwrapRef } from 'vue';
-// import { cloneDeep } from 'lodash-es';
 
 //表头
 let columns = ref<TableColumnsType>([
@@ -16,18 +14,20 @@ let columns = ref<TableColumnsType>([
         title: '员工名',
         dataIndex: 'PERSON_NAME',
         key: 'PERSON_NAME',
-        width: 150,
     },
     {
         title: '账号',
         dataIndex: 'PERSON_CODE',
         key: 'PERSON_CODE',
-        width: 150,
     },
     {
         title: '用户角色',
         dataIndex: 'ROLE_NAME',
         key: 'ROLE_NAME',
+    },
+    {
+        title: '操作',
+        dataIndex: 'operation',
     },
 ])
 let selectData = reactive({
@@ -56,7 +56,16 @@ const start = () => {
     state.loading = false;
     state.selectedRowKeys = [];
   }, 1000);
-};
+}
+
+let tablePagination = reactive({
+    current: 1,
+    pageSize: 10,
+    showSizeChanger: true,
+    showTotal: ((total:number) => {
+        return `共 ${total} 条`;
+    }),
+})
 
 onMounted(() => {
     getUserTableData(toRaw(selectData))
@@ -81,6 +90,13 @@ function onFinishFailed() {
 
 }
 
+//表格改变
+function onTableChange(pagination:any) {
+    tablePagination.pageSize = pagination.pageSize
+    tablePagination.current = pagination.current
+}
+
+
 //重置
 function onResetClick() {
     selectData = reactive({
@@ -93,7 +109,13 @@ function onResetClick() {
 const onSelectChange = (selectedRowKeys: []) => {
   console.log('selectedRowKeys changed: ', selectedRowKeys);
   state.selectedRowKeys = selectedRowKeys;
-};
+}
+
+//删除
+function onDelete(key: string) {
+    dataSource.value = dataSource.value.filter(item => item.RECID !== key);
+    
+}
 </script>
 
 <template>
@@ -130,11 +152,25 @@ const onSelectChange = (selectedRowKeys: []) => {
                     </template>
                 </span>
             </div> -->
+            <!--  :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }" -->
             <a-table bordered size="middle" 
-                :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
+                :pagination="tablePagination"
                 :dataSource="dataSource" 
                 :columns="columns"
-                :scroll="{ y: 480 }" />
+                :scroll="{ y: 480 }" 
+                @change="onTableChange">
+                <template #bodyCell="{ column, record }">
+                    <template  v-if="column.dataIndex === 'operation'">
+                        <a-popconfirm
+                            v-if="dataSource.length"
+                            title="确定删除"
+                            @confirm="onDelete(record.RECID)"
+                        >
+                            <a>删除</a>
+                        </a-popconfirm>
+                    </template>
+                </template>
+            </a-table>
         </main>
     </div>
 </template>

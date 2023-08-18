@@ -7,22 +7,22 @@ const router = useRouter()
 let clientWidth:any = ref(0)
 
 onMounted(() => {
-    // if (_isMobile()) {
-    //     router.push({ name: "login" })
-    // } else {
-    //     router.push({ name: "pclogin" })
-    // }
-    window.onresize = () => {
-        if(_isMobile() || document.body.clientWidth < 1000) {
-            router.push({ name: "login" })
-        }else {
-            if(route.name == 'login') {
-                router.push({ name: "pclogin" })
-            }else {
-                router.go(0)
-            }
-        }
+    if (_isMobile()) {
+        router.push({ name: "login" })
+    } else {
+        router.push({ name: "pclogin" })
     }
+    // window.onresize = () => {
+    //     if(_isMobile() || document.body.clientWidth < 1000) {
+    //         router.push({ name: "login" })
+    //     }else {
+    //         if(route.name == 'login') {
+    //             router.push({ name: "pclogin" })
+    //         }else {
+    //             router.go(0)
+    //         }
+    //     }
+    // }
 })
 
 watch: {

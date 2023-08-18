@@ -11,9 +11,31 @@ let barOption:any = {
     },
     grid: {
         left: '10%',
-        right: '15%'
+        right: '10%'
     },
-    xAxis: {
+    toolbox: {
+        id: 'chart',
+        show: true,
+        orient: 'vertical',
+        feature: {
+            dataView: {
+                readOnly: true,
+                title: '数据视图',
+                lang: ['数据视图', '关闭', '刷新']
+            },
+            magicType: {
+                type: ["line", "bar"],
+                title: {line: '折线图', bar: '条形图'}
+            },
+            restore: {
+                title: '还原'
+            },
+            saveAsImage: {
+                title: '保存为图片'
+            }
+        }
+    },
+    xAxis: [{
         type: 'category',
         name: '日期',
         data: [],
@@ -21,27 +43,36 @@ let barOption:any = {
         　　interval:0,
         　　rotate:60
         },
-    },
-    yAxis: {
+    }],
+    yAxis: [{
         type: 'value',
         minInterval: 1,
-    },
+    }],
     tooltip: {
         trigger: 'axis',
         axisPointer: {
             type: 'shadow'
         }
     },
-    toolbox: {
-        id: '11',
-        show: true,
-        orient: 'horizontal'
-    },
     legend: {
-        data: ['邮件', '邮袋'],
-        left: 'right'
+        data: ['总包', '邮件'],
+        left: 'left'
     },
     series: [
+        {
+            name: '总包',
+            data: [],
+            type: 'bar',
+            itemStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    { offset: 0, color: '#FC8452' },
+                    { offset: 1, color: '#F5804E' }
+                ])
+            },
+            emphasis: {
+                focus: 'series'
+            },
+        },
         {
             name: '邮件',
             data: [],
@@ -55,35 +86,18 @@ let barOption:any = {
             emphasis: {
                 focus: 'series'
             }
-        },
-        {
-            name: '邮袋',
-            data: [],
-            type: 'bar',
-            itemStyle: {
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                    { offset: 0, color: '#FC8452' },
-                    { offset: 1, color: '#F5804E' }
-                ])
-            },
-            emphasis: {
-                focus: 'series'
-            },
-            // animationDelay: function (idx) {
-            //     return idx * 200;
-            // }
         }
     ],
-    animationEasing: 'elasticOut',
-    animationDelayUpdate: function (idx) {
-        return idx * 10;
-    },
+    // animationEasing: 'elasticOut',
+    // animationDelayUpdate: function (idx) {
+    //     return idx * 1;
+    // },
     dataZoom:[
         {
             type: 'inside',//内置于坐标系中的滑动条
-            start: 50, //数据窗口范围的起始百分比0-100
+            start: 60, //数据窗口范围的起始百分比0-100
             end: 100, //数据窗口范围的结束百分比0-100
-            xAxisIndex: [0], // 此处表示控制第一个xAxis
+            xAxisIndex: [0],
         },
     ]
 }
@@ -93,7 +107,6 @@ let myChart:any
 
 onMounted(() => {
     getTallyingGroupData()
-    getMailNoGroupData()
     window.addEventListener('resize', () => {
         // clientWidth.value = document.body.clientWidth
         myChart.resize()
@@ -110,23 +123,22 @@ onMounted(() => {
 // })
 
 
-//获取理货总包数据
+//获取总包数据
 function getTallyingGroupData() {
     service.gh_service.axios('ydxxqk').then((res:any) => {
         if(res.success == true) {
-            barOption.xAxis.data = []
-            barOption.dataZoom[0].xAxisIndex = []
-            barOption.series[1].data = []
+            barOption.xAxis[0].data = []
             let data = res.data
             data.forEach((e:any) => {
-                barOption.xAxis.data.push(e.D_CJSJ)
-                barOption.dataZoom[0].xAxisIndex.push(e.D_APPTIME)
-                barOption.series[1].data.push(e.NUM)
+                barOption.xAxis[0].data.push(e.D_CJSJ)
+                barOption.series[0].data.push(e.NUM)
             })
+            
             //根据数据变动，尽可能显示8条数据
             if(data.length > 8) {
                 barOption.dataZoom[0].start = (8/data.length) * 100
             }
+           getMailNoGroupData()
         }
     }).catch((err:any) => {
         console.log(err);
@@ -134,14 +146,14 @@ function getTallyingGroupData() {
     })
 }
 
-//获取邮袋数据
+//获取邮件数据
 function getMailNoGroupData() {
     service.gh_service.axios('yjxxqk').then((res:any) => {
         if(res.success == true) {
-            barOption.series[0].data = []
+            barOption.series[1].data = []
             let data = res.data
             data.forEach((e:any) => {
-                barOption.series[0].data.push(e.NUM)
+                barOption.series[1].data.push(e.NUM)
             })
             createBarChart()
         }
@@ -155,7 +167,7 @@ function getMailNoGroupData() {
 function createBarChart() {
     let chartDom = bar.value
     myChart = echarts.init(chartDom)
-    myChart.resize()
+    // myChart.resize()
     barOption && myChart.setOption(barOption)
 }
 

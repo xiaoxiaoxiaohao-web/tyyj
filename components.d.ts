@@ -25,6 +25,7 @@ declare module 'vue' {
     MailNoTable: typeof import('./src/components/PC/MailNoTable.vue')['default']
     Outbound: typeof import('./src/components/Mobile/Home/Outbound.vue')['default']
     PC: typeof import('./src/components/PC/index.vue')['default']
+    Roll: typeof import('./src/components/PC/DataDisplay/roll.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Tallying: typeof import('./src/components/Mobile/Home/Tallying.vue')['default']
