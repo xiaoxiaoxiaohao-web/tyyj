@@ -7,18 +7,30 @@ import { showToast, showFailToast, showNotify, showLoadingToast, closeToast } fr
 const homeStore = useHomeStore()
 
 let searchValue = ref('')
-let showCenter = ref(false)
-let mailbagWeight:any = []
-let showCurrentWeight = ref(0)
+let showCenter = ref<boolean>(false)
+let mailbagWeight = []
+let showCurrentWeight = ref<number>(0)
 
 let instance:any  = getCurrentInstance()
 
-let formData:any = reactive({
+interface form {
+    V_CARNO: string, 
+    V_ADDRESS: string, 
+    V_MAILBAG_NUM: number,
+    V_BAGNO: Array<any>,
+    V_MAILBAG_WEIGHT: string,
+    V_AUDIT_TYPE: string,
+    CUSTOMS_CODE: string,
+    V_OPERNAME: string
+}
+
+
+let formData:form = reactive({
     V_CARNO: '', 
     V_ADDRESS: '', 
-    V_MAILBAG_NUM: '0',
+    V_MAILBAG_NUM: 0,
     V_BAGNO: [],
-    V_MAILBAG_WEIGHT: 0,
+    V_MAILBAG_WEIGHT: '0',
     V_AUDIT_TYPE: '',
     CUSTOMS_CODE: '5147',
     V_OPERNAME: homeStore.user.PERSON_NAME
@@ -230,7 +242,7 @@ function onDeleteClick(index:number, item?:any) {
     mailbagWeight.splice(index, 1)
 
     //计算总重量、数量
-    formData.V_MAILBAG_WEIGHT = (formData.V_MAILBAG_WEIGHT - currentWeight).toFixed(2)
+    formData.V_MAILBAG_WEIGHT = (parseFloat(formData.V_MAILBAG_WEIGHT) - currentWeight).toFixed(2)
     formData.V_MAILBAG_NUM = formData.V_BAGNO.length
     showCurrentWeight.value = currentWeight
     showToast('删除成功')
@@ -318,6 +330,5 @@ function onDeleteClick(index:number, item?:any) {
 main {
     padding-top: 2vh;
     padding-bottom: 50px;
-    /* background-color: #F7F8FA; */
 }
 </style>

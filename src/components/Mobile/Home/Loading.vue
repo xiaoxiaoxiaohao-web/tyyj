@@ -8,14 +8,22 @@ import { useHomeStore } from '@/store/home';
 
 const homeStore = useHomeStore()
 let instance:any = getCurrentInstance()
-let searchValue = ref()
+let searchValue = ref<string>()
 let searchRef = ref<HTMLInputElement|null>(null)
-let audioNoResult:any = reactive({
+
+interface adudioNo {
+    V_AUDIT_NO: string,
+    V_CHECK: string,
+    V_PASSDESC: string
+}
+
+
+let audioNoResult:adudioNo = reactive({
     V_AUDIT_NO: '',
     V_CHECK: '',
     V_PASSDESC: ''
 })
-const cell:any = reactive([])
+const cell:Array<any> = reactive([])
 
 
 
@@ -120,7 +128,7 @@ function updateAuditNo(check:string) {
 }
 
 //查询同序列号邮袋
-function getAuditNoBagNo(bagno:any) {
+function getAuditNoBagNo(bagno:string) {
     service.gh_service.axios('gjydhcxtcydqd', {
         V_BAGNO: bagno
     }).then((res:any) => {
@@ -178,7 +186,7 @@ function onSubmit() {
 }
 
 //装车出库申请
-async function outbandAuditBindReport(params:any) {
+async function outbandAuditBindReport(params:string) {
     //装车出库申请绑定接口
     return await service.hg_service.axios({
         service: 'RetpostMailService',

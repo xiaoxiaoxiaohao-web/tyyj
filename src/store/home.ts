@@ -15,11 +15,7 @@ export const useHomeStore = defineStore('home', {
         }
     },
     actions: {
-        // changeNum() {
-            
-        // }
     },
     getters: {
-        getNum: state => state
     }
 })

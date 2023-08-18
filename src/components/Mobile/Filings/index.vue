@@ -1,25 +1,19 @@
 <script setup lang="ts">
 import service from '@/service/index'
-import { onMounted, reactive, ref, toRaw, getCurrentInstance } from 'vue'
+import { onMounted, reactive, ref, toRaw } from 'vue'
 import { useHomeStore } from '@/store/home';
 import { useRouter } from 'vue-router';
 import { showToast, showFailToast, showNotify, showLoadingToast, closeToast } from 'vant';
 
 const homeStore = useHomeStore()
-let instance:any = getCurrentInstance()
-let searchValue = ref('')
-type car = {
-    V_CARNO : string,
-    V_ENT_TYPE: string,
-    V_ENT_NAME: string,
-    V_OPERNAME: string,
-    V_CHECK: string
-}
-const carList: Array<car> = reactive([])
+let searchValue = ref<string>('')
+
+
+const carList= reactive([])
 let router = useRouter()
 
 let show = ref(false)
-let chooseList:any = reactive({})
+let chooseList = reactive({})
 
 const actions = [
     { name: '修改' },
@@ -76,8 +70,6 @@ function getCarInfo(carno:any) {
         });
     }).catch((err:any) => {
         console.log(err);
-        
-        instance.appContext.config.globalProperties.$judgeError(err.message, err.response)
     })
 }
 

@@ -13,7 +13,7 @@ declare module 'vue' {
     Chart: typeof import('./src/components/PC/DataDisplay/chart.vue')['default']
     Confirmation: typeof import('./src/components/Mobile/Home/Confirmation.vue')['default']
     copy: typeof import('./src/components/PC/DataDisplay/MailNoRoll copy.vue')['default']
-    DataDisplay: typeof import('./src/components/PC/DataDisplay.vue')['default']
+    DataDisplay: typeof import('./src/components/PC/DataDisplay/index.vue')['default']
     DetailInfo: typeof import('./src/components/Mobile/User/DetailInfo.vue')['default']
     Filings: typeof import('./src/components/Mobile/Filings/index.vue')['default']
     Graph: typeof import('./src/components/PC/DataDisplay/graph.vue')['default']

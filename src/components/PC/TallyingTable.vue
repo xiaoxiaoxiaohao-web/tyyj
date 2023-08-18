@@ -5,7 +5,7 @@ import { TableColumnsType, FormProps, message  } from 'ant-design-vue'
 import table2excel from 'js-table2excel'
 
 //表头
-let columns:any = ref<TableColumnsType>([
+let columns = ref<TableColumnsType>([
     {
         title: '邮袋号',
         dataIndex: 'V_BAGNO',

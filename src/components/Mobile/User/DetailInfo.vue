@@ -15,11 +15,6 @@ let form = reactive({
 function onClickLeft() {
     router.push({name: 'user'}) 
 }
-
-//修改
-function onSubmit() {
-    console.log(toRaw(form));  
-}
 </script>
 
 <template>
@@ -51,11 +46,6 @@ function onSubmit() {
                         readonly
                     />
                 </van-cell-group>
-                <!-- <div style="margin: 16px;">
-                    <van-button round block type="primary" native-type="submit">
-                    修改
-                    </van-button>
-                </div> -->
             </van-form>
         </main>
     </div>

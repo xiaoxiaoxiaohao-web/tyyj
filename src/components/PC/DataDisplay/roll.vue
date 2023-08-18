@@ -79,12 +79,6 @@ function getCurrentDate() {
     <div class="roll">
         <header>
             <h3>{{title}}({{getCurrentDate()}})</h3>
-            <!-- <div class="radio">
-                <a-radio-group v-model:value="radioValue"  button-style="solid" @change="onRadioChange">
-                    <a-radio-button value="邮件">邮件</a-radio-button>
-                    <a-radio-button value="总包">总包</a-radio-button>
-                </a-radio-group>
-            </div> -->
         </header>
         <main>
             <swiper :slides-per-view="5"

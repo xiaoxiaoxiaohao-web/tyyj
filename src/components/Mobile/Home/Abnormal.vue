@@ -1,17 +1,28 @@
 <script lang="ts" setup>
 import service from '@/service/index'
-import { getCurrentInstance, onMounted, reactive, ref, toRaw } from 'vue'
+import { onMounted, reactive, ref, toRaw } from 'vue'
 import { showNotify, showFailToast, showToast, showDialog  } from 'vant'
 import { useHomeStore } from '@/store/home';
 import {Base64} from 'js-base64'
 
 
 const homeStore = useHomeStore()
-let instance:any = getCurrentInstance()
-let searchValue = ref()
+let searchValue = ref<string>()
 let searchRef = ref<HTMLInputElement|null>(null)
-let abNo:any = ref('')
-let cell:any = reactive({
+let abNo = ref<string>('')
+
+interface cell {
+    V_MAILNO: string,
+    V_ABNORMALTYPE: string,
+    V_OPERATORNAME: string,
+    V_ENTNAME: string,
+    V_ABINFO: string,
+    V_INSTRSTATE: string,
+    V_FILENAME: string,
+    V_FILEDATA: string,
+}
+
+let cell:cell = reactive({
     V_MAILNO: '',
     V_ABNORMALTYPE: '',
     V_OPERATORNAME: homeStore.user.PERSON_NAME,
@@ -22,13 +33,13 @@ let cell:any = reactive({
     V_FILEDATA: '',
 })
 
-let showAbinfoPicker = ref(false)
+let showAbinfoPicker = ref<boolean>(false)
 let abinfoColumns = [
     { text: '安检拉下', value: '安检拉下' },
     { text: '截留邮件', value: '截留邮件' },
     { text: '放弃包', value: '放弃包' },
 ]
-let showAbnormalTypePicker = ref(false)
+let showAbnormalTypePicker = ref<boolean>(false)
 let abnormalTypeColums = [
     { text: '其他原因出库', value: '1' },
     { text: '已装袋邮件状态修改', value: '2' },

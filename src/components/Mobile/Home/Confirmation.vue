@@ -6,10 +6,18 @@ import { showToast, showFailToast, showNotify } from 'vant';
 
 const homeStore = useHomeStore()
 let instance = getCurrentInstance()
-let searchValue = ref()
+let searchValue = ref<string>()
 let searchRef = ref<HTMLInputElement|null>(null)
-let V_AUDIT_TYPE = ref()
-let show = ref(true)
+let V_AUDIT_TYPE = ref<string>()
+let show = ref<boolean>(true)
+
+
+interface form {
+    V_AUDIT_NO: string, 
+    V_LOCK_NO: string 
+    V_DRIVER_NO: string
+    V_OPERNAME: string
+}
 
 let formData:any = reactive({
     V_AUDIT_NO: '', 

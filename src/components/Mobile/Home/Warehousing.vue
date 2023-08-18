@@ -8,12 +8,12 @@ import { message } from 'ant-design-vue';
 
 const homeStore = useHomeStore()
 let router = useRouter()
-let instance:any = getCurrentInstance()
+// let instance:any = getCurrentInstance()
 
 
 let searchRef = ref<HTMLInputElement|null>(null)
 let search = reactive({value: ''})
-let showHgResult = ref(false)
+let showHgResult = ref<boolean>(false)
 
 function cellList() {
     return {
@@ -99,7 +99,6 @@ function judgeBz(mailNo:string) {
     }).catch((err:any) => {
         console.log(err)
         showNotify('出现错误，原因：' + err)
-        // instance.appContext.config.globalProperties.$judgeError(err.message)
     }) 
 }
 
@@ -125,7 +124,6 @@ function judgeTy(mailNo:string) {
     }).catch((err: any) => {
         console.log(err)
         showNotify('出现错误，原因：' + err)
-        // instance.appContext.config.globalProperties.$judgeError(err.message)
     })
 }
 
@@ -169,7 +167,6 @@ function mainReport(mailNo:string, mailType:string) {
         
     }).catch((err:any) => {
         console.log(err);
-        // instance.appContext.config.globalProperties.$judgeError(err.message)
         cell.V_NOTE = '海关审查失败!!'
     })
 }

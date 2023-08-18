@@ -142,17 +142,6 @@ function onDelete(key: string) {
             </a-form>
         </header>
         <main>
-            <!-- <div style="margin-bottom: 16px">
-                <a-button type="primary" :loading="state.loading" @click="start">
-                    Reload
-                </a-button>
-                <span style="margin-left: 8px">
-                    <template v-if="hasSelected">
-                    {{ `Selected ${state.selectedRowKeys.length} items` }}
-                    </template>
-                </span>
-            </div> -->
-            <!--  :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }" -->
             <a-table bordered size="middle" 
                 :pagination="tablePagination"
                 :dataSource="dataSource" 
