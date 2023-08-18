@@ -5,8 +5,8 @@ import { useHomeStore } from '@/store/home';
 import { showToast, showFailToast, showNotify } from 'vant';
 
 
-let searchValue = ref()
-const cellList:any = ref([])
+let searchValue = ref<string>()
+const cellList = ref<Array<any>>([])
 const homeStore = useHomeStore()
 let instance:any = getCurrentInstance()
 
@@ -17,7 +17,7 @@ onMounted(() => {
 })
 
 //采集条码
-function onSearch(val:any) {
+function onSearch(val:string) {
     val = val.trim()
     //两种总包类型
     let pattern1 = /^[0-9]{30}$/
@@ -46,7 +46,7 @@ function judgeRepeat(val:string) {
     return result;
 }
 //自动提交，插入数据库
-function autoSubmit(bagno:any) {
+function autoSubmit(bagno:string) {
     service.gh_service.axios('cjzbtm', {
         V_BAGNO: bagno,
         V_OPERATORNAME: homeStore.user.PERSON_NAME

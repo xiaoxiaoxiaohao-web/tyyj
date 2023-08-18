@@ -88,10 +88,6 @@ let barOption:any = {
             }
         }
     ],
-    // animationEasing: 'elasticOut',
-    // animationDelayUpdate: function (idx) {
-    //     return idx * 1;
-    // },
     dataZoom:[
         {
             type: 'inside',//内置于坐标系中的滑动条
@@ -108,19 +104,10 @@ let myChart:any
 onMounted(() => {
     getTallyingGroupData()
     window.addEventListener('resize', () => {
-        // clientWidth.value = document.body.clientWidth
         myChart.resize()
         barOption && myChart.setOption(barOption)
     })
 })
-
-// watch(clientWidth, (newVal, oldVal) => {
-//     console.log(newVal);
-//     console.log(oldVal);
-//     getTallyingGroupData()
-//     getMailNoGroupData()
-    
-// })
 
 
 //获取总包数据
@@ -167,7 +154,6 @@ function getMailNoGroupData() {
 function createBarChart() {
     let chartDom = bar.value
     myChart = echarts.init(chartDom)
-    // myChart.resize()
     barOption && myChart.setOption(barOption)
 }
 
@@ -187,6 +173,5 @@ function createBarChart() {
 .bar{
     width: 100%;
     height: 600px;
-    /* border: 2px solid #fff; */
 }
 </style>

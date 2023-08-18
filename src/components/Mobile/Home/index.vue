@@ -2,9 +2,9 @@
 import { reactive } from 'vue'
 import { useRouter } from 'vue-router';
 
-let sidebar = reactive({active: 0})
+let sidebar:object = reactive({active: 0})
 let router = useRouter()
-let onSidebarChange = (index: any) => {
+let onSidebarChange = (index: number) => {
     switch(index){
         case 0: 
             router.push({name: 'warehousing'}) 

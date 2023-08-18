@@ -10,7 +10,14 @@ let router = useRouter()
 const instance:any = getCurrentInstance()
 const homeStore = useHomeStore()
 
-let carInfo:any = reactive({
+interface car {
+    V_CARNO: string,
+    V_ENT_TYPE: string,
+    V_ENT_NAME: string,
+    V_OPERNAME: string
+}
+
+let carInfo:car = reactive({
     V_CARNO: '',
     V_ENT_TYPE: '',
     V_ENT_NAME: '',

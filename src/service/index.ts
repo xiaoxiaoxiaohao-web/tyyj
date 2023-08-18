@@ -7,7 +7,6 @@ let baseHgURL: string;
 if(process.env.NODE_ENV === 'development') {
     baseGhURL = 'http://10.194.69.22:8520/api/tyyj/',
     baseHgURL = 'http://localhost:5173/hg'
-    console.log(baseHgURL);
 }
 
 //配置生产环境
@@ -16,9 +15,6 @@ if(process.env.NODE_ENV === 'production') {
     // baseHgURL = 'http://10.0.0.240:1234/hg' 
     baseGhURL = 'http://10.194.69.22:8520/api/tyyj/',
     baseHgURL = 'http://10.194.69.24:1234/hg' 
-    console.log(baseHgURL);
-    console.log("dsgds4896749879");
-    
 }
 
 //设置请求头
@@ -33,7 +29,6 @@ let gh_service = {
     //接口
     axios(url: string, data?: any) {
         let gh_url = baseGhURL + url;
-        // Object.assign(default_header1, header)
         return service.post(gh_url, data, default_header1)
     }
 }

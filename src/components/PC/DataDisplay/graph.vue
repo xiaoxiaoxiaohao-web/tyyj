@@ -103,7 +103,6 @@ let myGraph:any
 onMounted(() => {
     createGraph()
     window.addEventListener('resize', () => {
-        // clientWidth.value = document.body.clientWidth
         myGraph.resize()
         graphOption && myGraph.setOption(graphOption)
     })
@@ -122,9 +121,7 @@ function createGraph() {
 </script>
 
 <template> 
-    <div class="graph" ref="graph">
-
-    </div>
+    <div class="graph" ref="graph"></div>
 </template>
 
 <style scoped>

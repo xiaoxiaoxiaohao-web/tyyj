@@ -12,7 +12,7 @@ dayjs.locale('zh');
 
 let router = useRouter()
 const homeStore = useHomeStore()
-let open = ref(false)
+let open = ref<boolean>(false)
 const current = ref<string[]>(['mailno'])
 const items: any = ref<MenuProps["items"]>([
 	{
@@ -81,9 +81,6 @@ function onClose() {
  <a-config-provider :locale="zhCN">
 	<div class="index">
 		<header>
-			<!-- <div class="title">
-				<img src="@/assets/images/logo.png" alt="logo">
-			</div> -->
 			<div class="menu">
 				<a-menu id="dddddd" v-model:selectedKeys="current" mode="horizontal" :items="items" @click="onMenuClick" />
 			</div>
