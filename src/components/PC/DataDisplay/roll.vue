@@ -2,14 +2,15 @@
 import service from '@/service/index'
 import { onMounted, reactive, ref, toRaw } from 'vue'
 import { Swiper, SwiperSlide } from 'swiper/vue'
-import { Autoplay } from 'swiper/modules';
+import { Autoplay } from 'swiper/modules'
+import { SwapOutlined } from '@ant-design/icons-vue'
 import 'swiper/css';
 let list = reactive({
     data: [],
     modules: [Autoplay]
 })
-let title = ref("入库邮件")
-let radioValue = ref("邮件")
+let title = ref<string>("入库邮件")
+let radioValue = ref<string>("邮件")
 
 onMounted(() => {
     getMailNoData()
@@ -73,12 +74,25 @@ function getCurrentDate() {
 //     }
     
 // }
+
+//切换
+function onSwitchClick() {
+    if(title.value == '入库邮件') {
+        getTallyingData()
+    }else {
+        getMailNoData()
+    }
+}
+
+
 </script>
 
 <template>
     <div class="roll">
         <header>
-            <h3>{{title}}({{getCurrentDate()}})</h3>
+            <h3>{{title}}({{getCurrentDate()}}) 
+                <swap-outlined title="切换" style="cursor:pointer" @click="onSwitchClick" />
+            </h3>
         </header>
         <main>
             <swiper :slides-per-view="5"

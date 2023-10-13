@@ -13,7 +13,7 @@ const carList= reactive([])
 let router = useRouter()
 
 let show = ref(false)
-let chooseList = reactive({})
+let chooseList:any = reactive({})
 
 const actions = [
     { name: '修改' },

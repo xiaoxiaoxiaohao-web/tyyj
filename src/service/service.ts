@@ -11,7 +11,7 @@ export default {
     get(url: string, params: any, headers: any) {
         return instance.get(url, {params, headers})
     },
-    post(url: string, params: any, headers: { Accept: string }) {
+    post(url: string, params: any, headers: any) {
         return instance.post(url, params, {headers})
     },
     // put(url: string, params: any, headers: any) {

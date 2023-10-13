@@ -102,7 +102,6 @@ const onFinishFailed = (errorInfo: any) => {
     background-size: cover;
     position: absolute;
     overflow: hidden;
-    /* height: 1193px; */
 }
 header {
     height: 50px;

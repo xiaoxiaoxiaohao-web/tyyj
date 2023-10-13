@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import zhCN from 'ant-design-vue/es/locale/zh_CN';
-import dayjs from 'dayjs';
+import zhCN from 'ant-design-vue/es/locale/zh_CN'
+import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn';
-import { h, ref } from "vue";
-import { TableOutlined, PieChartOutlined, TeamOutlined, UserOutlined, CaretDownOutlined } from "@ant-design/icons-vue";
-import { MenuProps, message } from "ant-design-vue";
-import { useRouter } from 'vue-router';
+import { h, provide, ref } from "vue"
+import { TableOutlined, PieChartOutlined, TeamOutlined, UserOutlined, CaretDownOutlined } from "@ant-design/icons-vue"
+import { MenuProps, message } from "ant-design-vue"
+import { useRouter } from 'vue-router'
 import { useHomeStore } from '@/store/home'
 
 dayjs.locale('zh');
@@ -28,6 +28,18 @@ const items: any = ref<MenuProps["items"]>([
 		title: "理货总包",
 	},
 	{
+		key: 'auditno',
+		icon: () => h(TableOutlined),
+		label: "出库序列号",
+		title: "出库序列号",
+	},
+	{
+		key: 'abnormal',
+		icon: () => h(TableOutlined),
+		label: "异常邮件",
+		title: "异常邮件",
+	},
+	{
 		key: 'user',
 		icon: () => h(TeamOutlined),
 		label: "用户管理",
@@ -41,6 +53,7 @@ const items: any = ref<MenuProps["items"]>([
 	},
 ])
 
+//菜单
 function onMenuClick({ item, key, keyPath }) {
 	switch(key){
 		case 'tallying':
@@ -48,6 +61,12 @@ function onMenuClick({ item, key, keyPath }) {
 			break;
 		case 'mailno':
 			router.push({name: 'mailnotable'})
+			break;
+		case 'auditno':
+			router.push({name: 'auditnotable'})
+			break;
+		case 'abnormal':
+			router.push({name: 'abnormaltable'})
 			break;
 		case 'user':
 			router.push({name: 'usertable'})
@@ -61,6 +80,7 @@ function onMenuClick({ item, key, keyPath }) {
 	
 }
 
+//退出
 function onExitClick() {
 	router.push({name: 'pclogin'})
 }
@@ -71,8 +91,8 @@ function onShowInfo() {
 }
 
 
-function onClose() {
-	open.value = false
+function getOpen(value:boolean) {
+	open.value = value
 }
 
 </script>
@@ -82,7 +102,7 @@ function onClose() {
 	<div class="index">
 		<header>
 			<div class="menu">
-				<a-menu id="dddddd" v-model:selectedKeys="current" mode="horizontal" :items="items" @click="onMenuClick" />
+				<a-menu id="ant-menu" v-model:selectedKeys="current" mode="horizontal" :items="items" @click="onMenuClick" />
 			</div>
 			<div class="user">
 				<a-avatar :size="48" style="background-color: #1989fa">
@@ -105,11 +125,7 @@ function onClose() {
 								</a-menu>
 							</template>
 					</a-dropdown>
-					<a-drawer :width="300" title="个人信息" :placement="placement" :open="open" @close="onClose">
-						<p>Some contents...</p>
-						<p>Some contents...</p>
-						<p>Some contents...</p>
-					</a-drawer>
+					<show-info :modifyOpen="open" @getOpen="getOpen"></show-info>
 				</div>
 			</div>
 		</header>
@@ -139,10 +155,10 @@ header {
 	line-height: 50px;
 }
 .menu {
-	width: calc(100% - 100px);
+	width: calc(100% - 160px);
 }
 .user {
-	min-width: 125px;
+	min-width: 165px;
 	line-height: 50px;
 	display: flex;
 }

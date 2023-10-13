@@ -133,11 +133,11 @@ async function judgeExist(mailNo:string) {
     await service.gh_service.axios('cxyjxx', {
         V_MAILNO: mailNo
     }).then((res:any) => {
-        if(res.data.length > 1) {
+        if(res.data.length > 0) {
             return true
         }
     }).catch((err:any) => {
-        console.log(err);
+        console.log(err)
         
     })
     return false
@@ -158,13 +158,20 @@ function mainReport(mailNo:string, mailType:string) {
             params: new_params
         }
     ).then((res:any) => {
-        cell.V_NOTE = res.result.info[0].mailRet
-        if(judgeExist(mailNo)){ //存在，更新数据库
-            update()
-        }else {//插入数据
+        let mailRet = res.result.info[0].mailRet
+        let retArray = mailRet.split('-')
+        cell.V_NOTE = retArray[retArray.length - 1]
+        if(retArray[0] == 'success') {
+            showToast(retArray[1])
             insert()
+            // if(judgeExist(mailNo)){ //存在，更新数据库
+            //     update()
+            // }else {//插入数据
+            //     insert()
+            // }
+        }else {
+            showNotify(retArray[2])
         }
-        
     }).catch((err:any) => {
         console.log(err);
         cell.V_NOTE = '海关审查失败!!'
@@ -215,7 +222,7 @@ function update() {
                 <van-field v-model="cell.V_MAILNO" label="邮件号" readonly  />
                 <van-field v-model="cell.MAILTYPE" label="邮件类型" readonly />
                 <van-field v-model="cell.D_RETURN_DATE" label="时间" readonly/>
-                <van-field v-model="cell.V_OPERNAME" label="操作人" readonly  />
+                <van-field v-model="cell.V_OPERNAME" label="操作人" disabled  />
             </van-cell-group>
             <van-cell-group v-show="showHgResult">
                 <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa', padding: '0 16px' }">

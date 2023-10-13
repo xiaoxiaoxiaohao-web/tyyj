@@ -24,6 +24,9 @@ let onSidebarChange = (index: number) => {
         case 5: 
             router.push({name: 'abnormal'})
             break;
+        case 6: 
+            router.push({name: 'trafficscan'})
+            break;
         default: 
             router.push({name: 'warehousing'})
     }
@@ -44,6 +47,7 @@ let onSidebarChange = (index: number) => {
                     <van-sidebar-item title="装车绑定" />
                     <van-sidebar-item title="装车确认" />
                     <van-sidebar-item title="异常邮件" />
+                    <van-sidebar-item title="退运交航" />
                 </van-sidebar>
             </nav>
             <article>

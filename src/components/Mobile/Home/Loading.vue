@@ -10,6 +10,7 @@ const homeStore = useHomeStore()
 let instance:any = getCurrentInstance()
 let searchValue = ref<string>()
 let searchRef = ref<HTMLInputElement|null>(null)
+let showButton = ref<boolean>(true)
 
 interface adudioNo {
     V_AUDIT_NO: string,
@@ -18,12 +19,13 @@ interface adudioNo {
 }
 
 
-let audioNoResult:adudioNo = reactive({
+let auditNoResult:adudioNo = reactive({
     V_AUDIT_NO: '',
     V_CHECK: '',
     V_PASSDESC: ''
 })
 const cell:Array<any> = reactive([])
+let endBind = ref<boolean>(true)
 
 
 
@@ -42,8 +44,8 @@ function onSearch(val:any) {
         showFailToast('条码不符合规则');
     }else {
         //重置审核结果
-        for(let key in audioNoResult) {
-            audioNoResult[key] = ''
+        for(let key in auditNoResult) {
+            auditNoResult[key] = ''
         }
     
         //清空数组
@@ -55,7 +57,7 @@ function onSearch(val:any) {
                 showFailToast('该邮袋未出库申请')
             }else {
                 let data = res.data[0]
-                audioNoResult.V_AUDIT_NO = data.V_AUDIT_NO
+                auditNoResult.V_AUDIT_NO = data.V_AUDIT_NO
                 getAuditResult()
                 getAuditNoBagNo(bagNo)
             }
@@ -83,30 +85,34 @@ function getAuditResult() {
     service.hg_service.axios({
         service: 'RetpostMailService',
         method: 'outbandAuditResultReport',
-        params: audioNoResult.V_AUDIT_NO
+        params: auditNoResult.V_AUDIT_NO
     }).then((res:any) => {
         let data = res.result.info[0]
         if(data.flag == '0') {
-            audioNoResult.V_CHECK = ''
-            audioNoResult.V_PASSDESC = data.desc
+            auditNoResult.V_CHECK = ''
+            auditNoResult.V_PASSDESC = data.desc
+            showButton.value = false
         }else {
             if(data.check == '1') {
-                audioNoResult.V_CHECK = '审核成功'
+                auditNoResult.V_CHECK = '审核通过'
+                showButton.value = true
             }else if(data.check == '-1') {
-                audioNoResult.V_CHECK = '未进行审核'
-                audioNoResult.V_PASSDESC = data.passdesc
+                auditNoResult.V_CHECK = '未进行审核'
+                auditNoResult.V_PASSDESC = data.passdesc
+                showButton.value = false
             }else {
-                audioNoResult.V_CHECK = '审核失败'
-                audioNoResult.V_PASSDESC = data.passdesc || data.desc
+                auditNoResult.V_CHECK = '审核失败'
+                auditNoResult.V_PASSDESC = data.passdesc || data.desc
+                showButton.value = false
             }
             //更新数据库 updateauditno
             updateAuditNo(data.check)
         }
     }).catch((err:any) => {
-        console.log(err);
+        console.log(err)
         showNotify({message: '海关审核结果查询失败,原因：' + err })
-        audioNoResult.V_CHECK = '查询失败'
-        audioNoResult.V_PASSDESC = '查询失败'
+        auditNoResult.V_CHECK = '查询失败'
+        auditNoResult.V_PASSDESC = '查询失败'
     })
 
 }
@@ -114,16 +120,15 @@ function getAuditResult() {
 //出库申请审核结果更新
 function updateAuditNo(check:string) {
     let new_params = {
-        V_AUDIT_NO: audioNoResult.V_AUDIT_NO,
+        V_AUDIT_NO: auditNoResult.V_AUDIT_NO,
         V_CHECK: check,
-        V_PASSDESC: audioNoResult.V_PASSDESC
+        V_PASSDESC: auditNoResult.V_PASSDESC
     }
     service.gh_service.axios('updateauditno', new_params).then((res:any) => {
-        console.log(res);
+        console.log(res)
         
     }).catch((err:any) => {
-        console.log(err);
-        instance.appContext.config.globalProperties.$judgeError(err.message)
+        console.log(err)
     })
 }
 
@@ -139,8 +144,7 @@ function getAuditNoBagNo(bagno:string) {
             cell.push(object)
         })
     }).catch((err:any) => {
-        console.log(err);
-        instance.appContext.config.globalProperties.$judgeError(err.message)
+        console.log(err)
         showNotify({message: '查询失败'})
     })
     searchValue.value = ''
@@ -156,7 +160,7 @@ function onSubmit() {
     });
     cell.forEach((e:any) => {
         let params = []
-        params.push(audioNoResult.V_AUDIT_NO)
+        params.push(auditNoResult.V_AUDIT_NO)
         params.push(e.V_BAGNO)
         params.push(homeStore.user.PERSON_NAME)
         let new_params = (JSON.stringify(params)).replace(/\"/g,"'")
@@ -173,19 +177,19 @@ function onSubmit() {
                 }
             }
             //更新数据库
-            updateBag(Object.assign(toRaw(e), {V_AUDIT_NO: audioNoResult.V_AUDIT_NO}))
+            updateBag(Object.assign(toRaw(e), {V_AUDIT_NO: auditNoResult.V_AUDIT_NO}))
             
         }).catch((err:any) => {
-            console.log(err);
-            instance.appContext.config.globalProperties.$judgeError(err.message)
+            console.log(err)
             showNotify({message: e.V_BAGNO + '绑定失败'})
         })
     })
-    outbandAuditEndBindReport(audioNoResult.V_AUDIT_NO)
-    closeToast();
+    endBind.value = false
+    //outbandAuditEndBindReport(auditNoResult.V_AUDIT_NO)
+    closeToast()
 }
 
-//装车出库申请
+//装车出库申请绑定接口
 async function outbandAuditBindReport(params:string) {
     //装车出库申请绑定接口
     return await service.hg_service.axios({
@@ -196,22 +200,35 @@ async function outbandAuditBindReport(params:string) {
 }
 
 //装车出库申请绑定结束接口
-function outbandAuditEndBindReport(audioNo:string) {
-    let params = [homeStore.user.PERSON_NAME]
-    params.unshift(audioNo)
+function outbandAuditEndBindReport() {
+    let params = [auditNoResult.V_AUDIT_NO, homeStore.user.PERSON_NAME]
     let new_params = (JSON.stringify(params)).replace(/\"/g, "'")
     service.hg_service.axios({
         service: 'RetpostMailService',
         method: 'outbandAuditEndBindReport',
         params: new_params
     }).then((res:any) => {
-        console.log("245645645646");
-        
-        console.log(res);
+        let data = res.result.info[0]
+        if(data.flag == 1) {  //补录的核查命中邮袋号列表
+            data.mailbags.forEach((e:string) => {
+                let object = {
+                    V_BAGNO: e,
+                    V_CHECK: 1,
+                    V_PASSDESC: '',
+                    V_AUDIT_NO: auditNoResult.V_AUDIT_NO
+                }
+                updateBag(object)
+            })
+            endBind.value = true
+            showButton.value = false
+            showToast('绑定结束成功')
+        }else {
+            showNotify('绑定结束失败')
+        }
         
     }).catch((err:any) => {
-        console.log(err);
-        instance.appContext.config.globalProperties.$judgeError(err.message)
+        console.log(err)
+        showNotify('出现错误， 原因：' + err)
     })
 }
 
@@ -219,11 +236,9 @@ function outbandAuditEndBindReport(audioNo:string) {
 //更新数据库
 function updateBag(params:object) {
     service.gh_service.axios('updatebag', params).then((res:any) => {
-        console.log(res);
-        
+        console.log(res)
     }).catch((err:any) => {
-        console.log(err);
-        instance.appContext.config.globalProperties.$judgeError(err.message)
+        console.log(err)
     })
 }
 
@@ -244,9 +259,9 @@ function updateBag(params:object) {
         </header>
         <main>
             <van-cell-group>
-                <van-field v-model="audioNoResult.V_AUDIT_NO" label="序列号" readonly  />
-                <van-field v-model="audioNoResult.V_CHECK" label="审核结果" readonly  />
-                <van-field v-model="audioNoResult.V_PASSDESC" label="反馈信息" readonly type="textarea" />
+                <van-field v-model="auditNoResult.V_AUDIT_NO" label="序列号" readonly  />
+                <van-field v-model="auditNoResult.V_CHECK" label="审核结果" readonly  />
+                <van-field v-model="auditNoResult.V_PASSDESC" label="反馈信息" readonly type="textarea" />
             </van-cell-group>
             <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa', padding: '0 16px' }">
                 同序列号的邮袋({{cell.length}})
@@ -258,7 +273,7 @@ function updateBag(params:object) {
                 <van-icon name="question" class="question" color="#1989fa" />未绑定
             </div>
             <div class="all">
-                <van-cell v-for="(item, index) in cell" :key="index" :label="item.V_BAGNO" title="">
+                <van-cell v-for="(item, index) in cell" :key="index" :label="item.V_PASSDESC" :title="item.V_BAGNO">
                     <template #right-icon>
                         <van-icon v-if="item.V_CHECK == '0'" name="checked" class="checked" color="#07f013" />
                         <van-icon v-else-if="item.V_CHECK == '1'" name="clear" class="clear" color="#ee0a24" />
@@ -267,7 +282,10 @@ function updateBag(params:object) {
                     </template>
                 </van-cell>
             </div>
-            <van-button type="primary" block @click="onSubmit" round>一键绑定</van-button>
+            <div style="margin: 16px;" v-show="showButton">
+                <van-button type="primary" block @click="onSubmit" round v-if="endBind">一键绑定</van-button>
+                <van-button type="primary" block @click="outbandAuditEndBindReport" round v-else>结束绑定</van-button>
+            </div>
         </main>
     </div>
 </template>

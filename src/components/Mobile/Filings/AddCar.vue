@@ -19,7 +19,7 @@ interface car {
 
 let carInfo:car = reactive({
     V_CARNO: '',
-    V_ENT_TYPE: '',
+    V_ENT_TYPE: '1',
     V_ENT_NAME: '',
     V_OPERNAME: homeStore.user.PERSON_NAME
 })
