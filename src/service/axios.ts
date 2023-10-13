@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const initAxios = axios.create({
-    timeout: 3000,
+    timeout: 10000,
     // withCredentials:true  //异步请求携带cookie
 })
 

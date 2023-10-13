@@ -46,7 +46,7 @@ function onSubmit() {
 }
 
 //判断新密码和重复新密码
-function judgeSamePassword(new_password:any, repeat_password:any) {
+function judgeSamePassword(new_password:string, repeat_password:string) {
     if(new_password == repeat_password) {
         return true
     }

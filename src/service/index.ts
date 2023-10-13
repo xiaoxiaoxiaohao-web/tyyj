@@ -11,10 +11,10 @@ if(process.env.NODE_ENV === 'development') {
 
 //配置生产环境
 if(process.env.NODE_ENV === 'production') {
-    // baseGhURL = 'http://10.0.0.22:8520/api/tyyj/',
-    // baseHgURL = 'http://10.0.0.240:1234/hg' 
-    baseGhURL = 'http://10.194.69.22:8520/api/tyyj/',
-    baseHgURL = 'http://10.194.69.24:1234/hg' 
+    baseGhURL = 'http://10.0.0.22:8520/api/tyyj/',
+    baseHgURL = 'http://10.0.0.240:1234/hg' 
+    // baseGhURL = 'http://10.194.69.22:8520/api/tyyj/',
+    // baseHgURL = 'http://10.194.69.24:1234/hg' 
 }
 
 //设置请求头
@@ -35,7 +35,7 @@ let gh_service = {
 let  hg_service = {
     axios(data: any) {
         let gh_url = baseHgURL;
-        return service.get(gh_url, data, default_header1)
+        return service.post(gh_url, data, default_header1)
     } 
 }
 

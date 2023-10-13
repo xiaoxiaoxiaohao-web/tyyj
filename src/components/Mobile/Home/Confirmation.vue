@@ -64,9 +64,10 @@ function outbandLiveReport() {
 
 //插入数据
 function updateflag(flag:string) {
-    Object.assign(formData, {V_FLAG: flag})
+    let newObject = {...formData}
+    Object.assign(newObject, {V_FLAG: flag})
     service.gh_service.axios('updateflag', 
-    toRaw(formData)
+    toRaw(newObject)
     ).then((res:any) => {
         console.log(res);
     }).catch((err:any) => {
@@ -132,14 +133,16 @@ function onSearch(val:any) {
         </header>
         <main>
             <van-cell-group>
-                <van-field v-model="formData.V_AUDIT_NO" label="序列号" readonly  />
-                <van-field v-model="V_AUDIT_TYPE" label="类型" readonly  />
+                <van-field v-model="formData.V_AUDIT_NO" label="序列号" disabled  />
+                <van-field v-model="V_AUDIT_TYPE" label="类型" disabled  />
                 <van-field v-model="formData.V_LOCK_NO" label="关锁号" required v-show="show" />
                 <van-field v-model="formData.V_DRIVER_NO" label="司机纸号" required v-show="show" />
-                <van-field v-model="formData.V_OPERNAME" name="操作人" label="操作人" readonly />
+                <van-field v-model="formData.V_OPERNAME" name="操作人" label="操作人" disabled />
             </van-cell-group>
         </main>
-        <van-button type="primary" block @click="onSubmit" round>装车确认</van-button>
+        <div style="margin: 16px;">
+            <van-button type="primary" block @click="onSubmit" round>装车确认</van-button>
+        </div>
     </div>
 </template>
 

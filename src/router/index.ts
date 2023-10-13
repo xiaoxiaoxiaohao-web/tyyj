@@ -8,6 +8,7 @@ import Outbound from '@/components/Mobile/Home/Outbound.vue'
 import Loading from '@/components/Mobile/Home/Loading.vue'
 import Confirmation from '@/components/Mobile/Home/Confirmation.vue'
 import Abnormal from '@/components/Mobile/Home/Abnormal.vue'
+import TrafficScan from '@/components/Mobile/Home/TrafficScan.vue'
 
 import Filings from '@/components/Mobile/Filings/index.vue'
 import AddCar from '@/components/Mobile/Filings/AddCar.vue'
@@ -19,9 +20,11 @@ import DetailInfo from '@/components/Mobile/User/DetailInfo.vue'
 
 import PCLogin from '@/components/PC/Login.vue'
 import Index from '@/components/PC/index.vue'
-import TallyingTable from '@/components/PC/TallyingTable.vue'
 import MailNoTable from '@/components/PC/MailNoTable.vue'
-import UserTable from '@/components/PC/UserTable.vue'
+import TallyingTable from '@/components/PC/TallyingTable.vue'
+import AuditNoTable from '@/components/PC/AuditNoTable/index.vue'
+import AbnormalTable from '@/components/PC/AbnormalTable/index.vue'
+import UserTable from '@/components/PC/UserTable/UserTable.vue'
 import DataDisplay from '@/components/PC/DataDisplay/index.vue'
 
 const router = createRouter({
@@ -82,6 +85,11 @@ const router = createRouter({
 			path: 'abnormal',
 			name: 'abnormal',
 			component: Abnormal,
+        },
+		{
+			path: 'trafficscan',
+			name: 'trafficscan',
+			component: TrafficScan,
         },
       ]
     },
@@ -146,6 +154,16 @@ const router = createRouter({
 				path: 'tallyingtable',
 				name: 'tallyingtable',
 				component: TallyingTable
+			},
+			{
+				path: 'auditnotable',
+				name: 'auditnotable',
+				component: AuditNoTable
+			},
+			{
+				path: 'abnormaltable',
+				name: 'abnormaltable',
+				component: AbnormalTable
 			},
 			{
 				path: 'usertable',
